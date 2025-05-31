@@ -90,6 +90,16 @@
       "ssn": "678901/2345",
       "age": 40,
       "isAdmin": true
+    },
+    {
+      "name": "kek",
+      "surname": "lmao",
+      "email": "lmaokek@asd.co",
+      "phone": "+421988595554",
+      "ssn": "488455/5454",
+      "age": 18,
+      "isAdmin": false,
+      "id": "c084"
     }
   ],
   "contractAdvisors": [

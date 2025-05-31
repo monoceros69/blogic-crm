@@ -4,7 +4,7 @@ export const clientSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   surname: z.string().min(1, 'Surname is required'),
   email: z.string().email('Invalid email'),
-  phone: z.string().min(1, 'Phone is required'),
+  phone: z.string().min(1, 'Phone is required').regex(/^\+?\d+$/, 'Invalid phone number format (optional + followed by digits)'),
   ssn: z.string().regex(/^\d{6}\/\d{4}$/, 'SSN must be in format 123456/7890'),
   age: z.coerce.number().min(18, 'Must be at least 18').max(120, 'Must be less than 120')
 });

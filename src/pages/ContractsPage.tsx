@@ -46,6 +46,14 @@ export function ContractsPage() {
 
   const createContractMutation = useMutation({
     mutationFn: async ({ contract, advisorIds }: { contract: ContractFormData; advisorIds: string[] }) => {
+      // Check for duplicate registration number
+      const existingContractWithSameNumber = contracts.find(
+        (c) => c.registrationNumber === contract.registrationNumber
+      );
+      if (existingContractWithSameNumber) {
+        throw new Error('Contract with this registration number already exists.');
+      }
+
       // Create the contract
       const contractResponse = await contractsApi.create(contract);
       const newContract = contractResponse.data;
@@ -67,18 +75,29 @@ export function ContractsPage() {
       queryClient.invalidateQueries({ queryKey: ['contractAdvisors'] });
       setIsFormOpen(false);
     },
+    onError: (error) => {
+      alert(error.message);
+    }
   });
 
   const updateContractMutation = useMutation({
-    mutationFn: async ({ 
-      id, 
-      contract, 
-      advisorIds 
-    }: { 
-      id: string; 
-      contract: ContractFormData; 
-      advisorIds: string[] 
+    mutationFn: async ({
+      id,
+      contract,
+      advisorIds
+    }: {
+      id: string;
+      contract: ContractFormData;
+      advisorIds: string[];
     }) => {
+      // Check for duplicate registration number on other contracts
+      const existingContractWithSameNumber = contracts.find(
+        (c) => c.registrationNumber === contract.registrationNumber && c.id !== id
+      );
+      if (existingContractWithSameNumber) {
+        throw new Error('Contract with this registration number already exists.');
+      }
+
       // Update the contract
       await contractsApi.update(id, contract);
 
@@ -112,6 +131,9 @@ export function ContractsPage() {
       setEditingContract(undefined);
       setEditingAdvisorIds([]);
     },
+    onError: (error) => {
+      alert(error.message);
+    }
   });
 
   const deleteContractMutation = useMutation({
@@ -133,10 +155,10 @@ export function ContractsPage() {
 
   const handleSubmit = (data: ContractFormData, advisorIds: string[]) => {
     if (editingContract?.id) {
-      updateContractMutation.mutate({ 
-        id: editingContract.id, 
+      updateContractMutation.mutate({
+        id: editingContract.id,
         contract: data,
-        advisorIds 
+        advisorIds
       });
     } else {
       createContractMutation.mutate({ contract: data, advisorIds });
