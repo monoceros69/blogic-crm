@@ -1,0 +1,107 @@
+{
+  "contracts": [
+    {
+      "id": "1",
+      "registrationNumber": "2024-001",
+      "institution": "ČSOB",
+      "clientId": 1,
+      "administratorId": 1,
+      "conclusionDate": "2024-01-15",
+      "validityDate": "2024-02-01",
+      "endingDate": "2025-02-01"
+    },
+    {
+      "id": "2",
+      "registrationNumber": "2024-002",
+      "institution": "AEGON",
+      "clientId": 2,
+      "administratorId": 1,
+      "conclusionDate": "2024-02-10",
+      "validityDate": "2024-02-15",
+      "endingDate": "2026-02-15"
+    }
+  ],
+  "clients": [
+    {
+      "id": "1",
+      "name": "John",
+      "surname": "Doe",
+      "email": "john.doe@email.com",
+      "phone": "+421900123456",
+      "ssn": "123456/7890",
+      "age": 35
+    },
+    {
+      "id": "2",
+      "name": "Jane",
+      "surname": "Smith",
+      "email": "jane.smith@email.com",
+      "phone": "+421900654321",
+      "ssn": "234567/8901",
+      "age": 42
+    },
+    {
+      "id": "3",
+      "name": "Robert",
+      "surname": "Johnson",
+      "email": "robert.johnson@email.com",
+      "phone": "+421900111222",
+      "ssn": "345678/9012",
+      "age": 28
+    }
+  ],
+  "advisors": [
+    {
+      "id": "1",
+      "name": "Michael",
+      "surname": "Brown",
+      "email": "michael.brown@company.com",
+      "phone": "+421900777888",
+      "ssn": "456789/0123",
+      "age": 45,
+      "isAdmin": true
+    },
+    {
+      "id": "2",
+      "name": "Sarah",
+      "surname": "Wilson",
+      "email": "sarah.wilson@company.com",
+      "phone": "+421900444555",
+      "ssn": "567890/1234",
+      "age": 38,
+      "isAdmin": false
+    },
+    {
+      "id": "3",
+      "name": "David",
+      "surname": "Taylor",
+      "email": "david.taylor@company.com",
+      "phone": "+421900333444",
+      "ssn": "678901/2345",
+      "age": 40,
+      "isAdmin": true
+    }
+  ],
+  "contractAdvisors": [
+    {
+      "id": "1",
+      "contractId": 1,
+      "advisorId": 1
+    },
+    {
+      "id": "2",
+      "contractId": 1,
+      "advisorId": 2
+    },
+    {
+      "id": "3",
+      "contractId": 2,
+      "advisorId": 1
+    },
+    {
+      "id": "4",
+      "contractId": 2,
+      "advisorId": 3
+    }
+  ]
+}
