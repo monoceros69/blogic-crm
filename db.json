@@ -29,6 +29,16 @@
       "conclusionDate": "2025-03-14",
       "validityDate": "2026-02-06",
       "endingDate": "2026-02-20"
+    },
+    {
+      "id": "e443",
+      "registrationNumber": "2024-005",
+      "institution": "ČSOB",
+      "clientId": "1",
+      "administratorId": "1",
+      "conclusionDate": "2025-05-22",
+      "validityDate": "2025-05-29",
+      "endingDate": "2025-05-31"
     }
   ],
   "clients": [
@@ -127,6 +137,16 @@
       "id": "10b4",
       "contractId": "8f0a",
       "advisorId": "3"
+    },
+    {
+      "id": "265a",
+      "contractId": "e443",
+      "advisorId": "3"
+    },
+    {
+      "id": "69d8",
+      "contractId": "e443",
+      "advisorId": "1"
     }
   ]
 }

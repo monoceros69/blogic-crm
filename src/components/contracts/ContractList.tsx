@@ -145,16 +145,16 @@ export function ContractList({ contracts, clients, advisors, onEdit, onDelete }:
                   <div className="text-gray-500">Validity Date</div>
                   <div>{new Date(contract.validityDate).toLocaleDateString()}</div>
                 </div>
-                <div className="flex justify-end space-x-3 pt-2">
+                <div className="flex -mx-4 -mb-4 mt-4 border-t border-gray-200">
                   <button
                     onClick={() => onEdit(contract)}
-                    className="bg-green-500 hover:bg-green-600 text-white font-medium py-1.5 px-3 rounded-md"
+                    className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 w-1/2 text-center rounded-bl-lg"
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => contract.id && onDelete(String(contract.id))}
-                    className="bg-red-500 hover:bg-red-600 text-white font-medium py-1.5 px-3 rounded-md"
+                    className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 w-1/2 text-center rounded-br-lg"
                   >
                     Delete
                   </button>

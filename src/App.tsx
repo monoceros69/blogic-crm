@@ -15,12 +15,12 @@ function App() {
             <h1 className="text-3xl font-bold text-gray-900">Contract Management</h1>
           </div>
           <nav className="bg-gray-200 shadow-inner">
-            <div className="max-w-7xl mx-auto px-0 sm:px-0 lg:px-0">
-              <div className="flex flex-col sm:flex-row justify-center">
+            <div className="max-w-7xl mx-auto px-0">
+              <div className="flex flex-col sm:flex-row">
                 <NavLink
                   to="/contracts"
                   className={({ isActive }) =>
-                    `py-2 text-base font-semibold text-center w-full sm:w-auto ${
+                    `py-2 text-base font-semibold text-center w-full sm:flex-grow ${
                       isActive
                         ? 'bg-gray-300 text-gray-900'
                         : 'text-gray-700 hover:bg-gray-300'
@@ -32,7 +32,7 @@ function App() {
                 <NavLink
                   to="/clients"
                   className={({ isActive }) =>
-                    `py-2 text-base font-semibold text-center w-full sm:w-auto ${
+                    `py-2 text-base font-semibold text-center w-full sm:flex-grow ${
                       isActive
                         ? 'bg-gray-300 text-gray-900'
                         : 'text-gray-700 hover:bg-gray-300'
@@ -44,7 +44,7 @@ function App() {
                 <NavLink
                   to="/advisors"
                   className={({ isActive }) =>
-                    `py-2 text-base font-semibold text-center w-full sm:w-auto ${
+                    `py-2 text-base font-semibold text-center w-full sm:flex-grow ${
                       isActive
                         ? 'bg-gray-300 text-gray-900'
                         : 'text-gray-700 hover:bg-gray-300'

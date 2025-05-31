@@ -91,7 +91,7 @@ export function ContractForm({
           <input
             type="text"
             {...register('registrationNumber')}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2 px-3"
           />
           {errors.registrationNumber && (
             <p className="mt-1 text-sm text-red-600">{errors.registrationNumber.message}</p>
@@ -104,7 +104,7 @@ export function ContractForm({
           </label>
           <select
             {...register('institution')}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2 px-3"
           >
             <option value="ČSOB">ČSOB</option>
             <option value="AEGON">AEGON</option>
@@ -122,7 +122,7 @@ export function ContractForm({
           </label>
           <select
             {...register('clientId')}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2 px-3"
           >
             <option value="">Select a client</option>
             {clients.map((client) => (
@@ -138,11 +138,11 @@ export function ContractForm({
 
         <div>
           <label htmlFor="administratorId" className="block text-sm font-medium text-gray-700">
-            Administrator (must be an admin)
+            Administrator
           </label>
           <select
             {...register('administratorId')}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2 px-3"
           >
             <option value="">Select an administrator</option>
             {advisors
@@ -165,7 +165,7 @@ export function ContractForm({
           <input
             type="date"
             {...register('conclusionDate')}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2 px-3"
           />
           {errors.conclusionDate && (
             <p className="mt-1 text-sm text-red-600">{errors.conclusionDate.message}</p>
@@ -179,7 +179,7 @@ export function ContractForm({
           <input
             type="date"
             {...register('validityDate')}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2 px-3"
           />
           {errors.validityDate && (
             <p className="mt-1 text-sm text-red-600">{errors.validityDate.message}</p>
@@ -193,7 +193,7 @@ export function ContractForm({
           <input
             type="date"
             {...register('endingDate')}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2 px-3"
           />
           {errors.endingDate && (
             <p className="mt-1 text-sm text-red-600">{errors.endingDate.message}</p>

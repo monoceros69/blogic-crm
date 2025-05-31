@@ -57,13 +57,13 @@ export function AdvisorList({ advisors, onEdit, onDelete }: AdvisorListProps) {
                     <div className="flex flex-col items-end space-y-2">
                       <button
                         onClick={() => onEdit(advisor)}
-                        className="bg-green-500 hover:bg-green-600 text-white font-medium py-1.5 px-3 rounded-md w-16 text-center"
+                        className="bg-green-500 hover:bg-green-600 text-white font-medium py-1.5 px-3 rounded-md w-24 text-center"
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => advisor.id && onDelete(advisor.id)}
-                        className="bg-red-500 hover:bg-red-600 text-white font-medium py-1.5 px-3 rounded-md w-16 text-center"
+                        className="bg-red-500 hover:bg-red-600 text-white font-medium py-1.5 px-3 rounded-md w-24 text-center"
                       >
                         Delete
                       </button>
@@ -92,24 +92,24 @@ export function AdvisorList({ advisors, onEdit, onDelete }: AdvisorListProps) {
                 </div>
                 <div className="grid grid-cols-2 gap-2 text-sm">
                   <div className="text-gray-500">Email</div>
-                  <div>{advisor.email}</div>
+                  <div className="break-words">{advisor.email}</div>
                   
                   <div className="text-gray-500">Phone</div>
-                  <div>{advisor.phone}</div>
+                  <div className="break-words">{advisor.phone}</div>
 
                   <div className="text-gray-500">Admin</div>
-                  <div>{advisor.isAdmin ? 'Yes' : 'No'}</div>
+                  <div className="break-words">{advisor.isAdmin ? 'Yes' : 'No'}</div>
                 </div>
-                <div className="flex justify-end space-x-3 pt-2">
+                <div className="flex -mx-4 -mb-4 mt-4border-t border-gray-200">
                   <button
                     onClick={() => onEdit(advisor)}
-                    className="bg-green-500 hover:bg-green-600 text-white font-medium py-1.5 px-3 rounded-md"
+                    className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 w-1/2 text-center rounded-bl-lg"
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => advisor.id && onDelete(advisor.id)}
-                    className="bg-red-500 hover:bg-red-600 text-white font-medium py-1.5 px-3 rounded-md"
+                    className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 w-1/2 text-center rounded-br-lg"
                   >
                     Delete
                   </button>
