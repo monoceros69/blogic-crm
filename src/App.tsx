@@ -9,56 +9,54 @@ import { AdvisorDetailsPage } from './pages/AdvisorDetailsPage';
 function App() {
   return (
     <Router>
-      <div className="min-h-screen bg-gray-50">
-        <nav className="bg-white shadow-sm border-b">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between h-16">
-              <div className="flex">
-                <div className="flex-shrink-0 flex items-center">
-                  <h1 className="text-xl font-bold text-gray-900">Contract Management</h1>
-                </div>
-                <div className="ml-10 flex items-baseline space-x-4">
-                  <NavLink
-                    to="/contracts"
-                    className={({ isActive }) =>
-                      `px-3 py-2 rounded-md text-sm font-medium ${
-                        isActive
-                          ? 'bg-indigo-100 text-indigo-700'
-                          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-                      }`
-                    }
-                  >
-                    Contracts
-                  </NavLink>
-                  <NavLink
-                    to="/clients"
-                    className={({ isActive }) =>
-                      `px-3 py-2 rounded-md text-sm font-medium ${
-                        isActive
-                          ? 'bg-indigo-100 text-indigo-700'
-                          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-                      }`
-                    }
-                  >
-                    Clients
-                  </NavLink>
-                  <NavLink
-                    to="/advisors"
-                    className={({ isActive }) =>
-                      `px-3 py-2 rounded-md text-sm font-medium ${
-                        isActive
-                          ? 'bg-indigo-100 text-indigo-700'
-                          : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
-                      }`
-                    }
-                  >
-                    Advisors
-                  </NavLink>
-                </div>
+      <div className="min-h-screen bg-gray-100">
+        <header className="bg-white shadow">
+          <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <h1 className="text-3xl font-bold text-gray-900">Contract Management</h1>
+          </div>
+          <nav className="bg-gray-200 shadow-inner">
+            <div className="max-w-7xl mx-auto px-0 sm:px-0 lg:px-0">
+              <div className="flex flex-col sm:flex-row justify-center">
+                <NavLink
+                  to="/contracts"
+                  className={({ isActive }) =>
+                    `py-2 text-base font-semibold text-center w-full sm:w-auto ${
+                      isActive
+                        ? 'bg-gray-300 text-gray-900'
+                        : 'text-gray-700 hover:bg-gray-300'
+                    }`
+                  }
+                >
+                  <span className="px-4 sm:px-3 lg:px-8">CONTRACTS</span>
+                </NavLink>
+                <NavLink
+                  to="/clients"
+                  className={({ isActive }) =>
+                    `py-2 text-base font-semibold text-center w-full sm:w-auto ${
+                      isActive
+                        ? 'bg-gray-300 text-gray-900'
+                        : 'text-gray-700 hover:bg-gray-300'
+                    }`
+                  }
+                >
+                  <span className="px-4 sm:px-3 lg:px-8">CLIENTS</span>
+                </NavLink>
+                <NavLink
+                  to="/advisors"
+                  className={({ isActive }) =>
+                    `py-2 text-base font-semibold text-center w-full sm:w-auto ${
+                      isActive
+                        ? 'bg-gray-300 text-gray-900'
+                        : 'text-gray-700 hover:bg-gray-300'
+                    }`
+                  }
+                >
+                  <span className="px-4 sm:px-3 lg:px-8">ADVISORS</span>
+                </NavLink>
               </div>
             </div>
-          </div>
-        </nav>
+          </nav>
+        </header>
 
         <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
           <Routes>

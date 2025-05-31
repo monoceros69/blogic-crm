@@ -37,7 +37,7 @@ export function AdvisorForm({ advisor, onSubmit, onCancel }: AdvisorFormProps) {
           <input
             type="text"
             {...register('name')}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2"
           />
           {errors.name && (
             <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
@@ -51,7 +51,7 @@ export function AdvisorForm({ advisor, onSubmit, onCancel }: AdvisorFormProps) {
           <input
             type="text"
             {...register('surname')}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2"
           />
           {errors.surname && (
             <p className="mt-1 text-sm text-red-600">{errors.surname.message}</p>
@@ -65,7 +65,7 @@ export function AdvisorForm({ advisor, onSubmit, onCancel }: AdvisorFormProps) {
           <input
             type="email"
             {...register('email')}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2"
           />
           {errors.email && (
             <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
@@ -79,7 +79,7 @@ export function AdvisorForm({ advisor, onSubmit, onCancel }: AdvisorFormProps) {
           <input
             type="tel"
             {...register('phone')}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2"
           />
           {errors.phone && (
             <p className="mt-1 text-sm text-red-600">{errors.phone.message}</p>
@@ -93,7 +93,7 @@ export function AdvisorForm({ advisor, onSubmit, onCancel }: AdvisorFormProps) {
           <input
             type="text"
             {...register('ssn')}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2"
           />
           {errors.ssn && (
             <p className="mt-1 text-sm text-red-600">{errors.ssn.message}</p>
@@ -107,7 +107,7 @@ export function AdvisorForm({ advisor, onSubmit, onCancel }: AdvisorFormProps) {
           <input
             type="number"
             {...register('age')}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2"
           />
           {errors.age && (
             <p className="mt-1 text-sm text-red-600">{errors.age.message}</p>
