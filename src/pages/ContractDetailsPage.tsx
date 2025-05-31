@@ -4,7 +4,7 @@ import { contractsApi, clientsApi, advisorsApi, contractAdvisorsApi } from '../s
 
 export function ContractDetailsPage() {
   const { id } = useParams<{ id: string }>();
-  const contractId = parseInt(id || '0');
+  const contractId = id || '';
 
   const { data: contract, isLoading: contractLoading } = useQuery({
     queryKey: ['contracts', contractId],
@@ -18,7 +18,7 @@ export function ContractDetailsPage() {
   const { data: client } = useQuery({
     queryKey: ['clients', contract?.clientId],
     queryFn: async () => {
-      const response = await clientsApi.getById(contract!.clientId);
+      const response = await clientsApi.getById(String(contract!.clientId));
       return response.data;
     },
     enabled: !!contract?.clientId,
@@ -27,7 +27,7 @@ export function ContractDetailsPage() {
   const { data: administrator } = useQuery({
     queryKey: ['advisors', contract?.administratorId],
     queryFn: async () => {
-      const response = await advisorsApi.getById(contract!.administratorId);
+      const response = await advisorsApi.getById(String(contract!.administratorId));
       return response.data;
     },
     enabled: !!contract?.administratorId,
@@ -51,7 +51,7 @@ export function ContractDetailsPage() {
   });
 
   const contractAdvisorsList = contractAdvisors
-    .map(ca => advisors.find(a => a.id === ca.advisorId))
+    .map(ca => advisors.find(a => a.id === String(ca.advisorId)))
     .filter(Boolean);
 
   if (contractLoading) {

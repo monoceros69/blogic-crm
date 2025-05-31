@@ -4,7 +4,7 @@ import { clientsApi } from '../services/api';
 
 export function ClientDetailsPage() {
   const { id } = useParams<{ id: string }>();
-  const clientId = parseInt(id || '0');
+  const clientId =  id || '';
 
   const { data: client, isLoading, error } = useQuery({
     queryKey: ['clients', clientId],

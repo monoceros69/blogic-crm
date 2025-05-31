@@ -8,8 +8,8 @@ interface ContractFormProps {
   contract?: Contract;
   clients: Client[];
   advisors: Advisor[];
-  selectedAdvisors?: number[];
-  onSubmit: (data: ContractFormData, advisorIds: number[]) => void;
+  selectedAdvisors?: string[];
+  onSubmit: (data: ContractFormData, advisorIds: string[]) => void;
   onCancel: () => void;
 }
 
@@ -21,7 +21,7 @@ export function ContractForm({
   onSubmit, 
   onCancel 
 }: ContractFormProps) {
-  const [advisorIds, setAdvisorIds] = useState<number[]>(
+  const [advisorIds, setAdvisorIds] = useState<string[]>(
     selectedAdvisors.length > 0 ? selectedAdvisors : []
   );
 
@@ -35,16 +35,16 @@ export function ContractForm({
     defaultValues: contract ? {
       registrationNumber: contract.registrationNumber,
       institution: contract.institution as 'ČSOB' | 'AEGON' | 'Axa' | 'Other',
-      clientId: contract.clientId,
-      administratorId: contract.administratorId,
+      clientId: String(contract.clientId),
+      administratorId: String(contract.administratorId),
       conclusionDate: contract.conclusionDate,
       validityDate: contract.validityDate,
       endingDate: contract.endingDate,
     } : {
       registrationNumber: '',
       institution: 'ČSOB',
-      clientId: 0,
-      administratorId: 0,
+      clientId: '',
+      administratorId: '',
       conclusionDate: '',
       validityDate: '',
       endingDate: '',
@@ -55,13 +55,13 @@ export function ContractForm({
 
   // Ensure administrator is in advisors list
   useEffect(() => {
-    if (administratorId && !advisorIds.includes(Number(administratorId))) {
-      setAdvisorIds([...advisorIds, Number(administratorId)]);
+    if (administratorId && !advisorIds.includes(administratorId)) {
+      setAdvisorIds([...advisorIds, administratorId]);
     }
   }, [administratorId]);
 
-  const handleAdvisorToggle = (advisorId: number) => {
-    if (advisorId === Number(administratorId)) {
+  const handleAdvisorToggle = (advisorId: string) => {
+    if (advisorId === administratorId) {
       alert('Cannot remove the administrator from advisors');
       return;
     }
@@ -126,7 +126,7 @@ export function ContractForm({
           >
             <option value="">Select a client</option>
             {clients.map((client) => (
-              <option key={client.id} value={client.id}>
+              <option key={client.id} value={String(client.id)}>
                 {client.name} {client.surname}
               </option>
             ))}
@@ -148,7 +148,7 @@ export function ContractForm({
             {advisors
               .filter(advisor => advisor.isAdmin)
               .map((advisor) => (
-                <option key={advisor.id} value={advisor.id}>
+                <option key={advisor.id} value={String(advisor.id)}>
                   {advisor.name} {advisor.surname}
                 </option>
               ))}
@@ -214,9 +214,9 @@ export function ContractForm({
               >
                 <input
                   type="checkbox"
-                  checked={advisorIds.includes(advisor.id!)}
-                  onChange={() => handleAdvisorToggle(advisor.id!)}
-                  disabled={advisor.id === Number(administratorId)}
+                  checked={advisorIds.includes(String(advisor.id))}
+                  onChange={() => handleAdvisorToggle(String(advisor.id))}
+                  disabled={String(advisor.id) === administratorId}
                   className="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
                 />
                 <span className="text-sm text-gray-700">
@@ -226,7 +226,7 @@ export function ContractForm({
                       Admin
                     </span>
                   )}
-                  {advisor.id === Number(administratorId) && (
+                  {String(advisor.id) === administratorId && (
                     <span className="ml-2 text-xs text-gray-500">(Contract Administrator)</span>
                   )}
                 </span>

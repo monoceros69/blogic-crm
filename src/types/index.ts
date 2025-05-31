@@ -1,5 +1,5 @@
 export interface Client {
-    id?: number;
+    id?: string;
     name: string;
     surname: string;
     email: string;
@@ -9,7 +9,7 @@ export interface Client {
   }
   
   export interface Advisor {
-    id?: number;
+    id?: string;
     name: string;
     surname: string;
     email: string;
@@ -20,18 +20,18 @@ export interface Client {
   }
   
   export interface Contract {
-    id?: number;
+    id?: string;
     registrationNumber: string;
     institution: string;
-    clientId: number;
-    administratorId: number;
+    clientId: string | number;
+    administratorId: string | number;
     conclusionDate: string;
     validityDate: string;
     endingDate: string;
   }
   
   export interface ContractAdvisor {
-    id?: number;
-    contractId: number;
-    advisorId: number;
+    id?: string;
+    contractId: string | number;
+    advisorId: string | number;
   }

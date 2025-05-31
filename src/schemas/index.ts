@@ -18,8 +18,8 @@ export const contractSchema = z.object({
   institution: z.enum(['ČSOB', 'AEGON', 'Axa', 'Other'], {
     errorMap: () => ({ message: 'Please select an institution' })
   }),
-  clientId: z.coerce.number().min(1, 'Client is required'),
-  administratorId: z.coerce.number().min(1, 'Administrator is required'),
+  clientId: z.coerce.string().min(1, 'Client is required'),
+  administratorId: z.coerce.string().min(1, 'Administrator is required'),
   conclusionDate: z.string().min(1, 'Conclusion date is required'),
   validityDate: z.string().min(1, 'Validity date is required'),
   endingDate: z.string().min(1, 'Ending date is required')

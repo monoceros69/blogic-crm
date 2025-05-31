@@ -9,7 +9,7 @@ export function AdvisorDetailsPage() {
   const { data: advisor, isLoading, error } = useQuery({
     queryKey: ['advisors', advisorId],
     queryFn: async () => {
-      const response = await advisorsApi.getById(advisorId);
+      const response = await advisorsApi.getById(String(advisorId));
       return response.data;
     },
     enabled: !!advisorId,

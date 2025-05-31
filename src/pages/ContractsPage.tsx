@@ -10,7 +10,7 @@ export function ContractsPage() {
   const queryClient = useQueryClient();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingContract, setEditingContract] = useState<Contract | undefined>();
-  const [editingAdvisorIds, setEditingAdvisorIds] = useState<number[]>([]);
+  const [editingAdvisorIds, setEditingAdvisorIds] = useState<string[]>([]);
 
   const { data: contracts = [], isLoading: contractsLoading } = useQuery({
     queryKey: ['contracts'],
@@ -45,7 +45,7 @@ export function ContractsPage() {
   });
 
   const createContractMutation = useMutation({
-    mutationFn: async ({ contract, advisorIds }: { contract: ContractFormData; advisorIds: number[] }) => {
+    mutationFn: async ({ contract, advisorIds }: { contract: ContractFormData; advisorIds: string[] }) => {
       // Create the contract
       const contractResponse = await contractsApi.create(contract);
       const newContract = contractResponse.data;
@@ -75,20 +75,20 @@ export function ContractsPage() {
       contract, 
       advisorIds 
     }: { 
-      id: number; 
+      id: string; 
       contract: ContractFormData; 
-      advisorIds: number[] 
+      advisorIds: string[] 
     }) => {
       // Update the contract
       await contractsApi.update(id, contract);
 
       // Get existing advisor relationships
       const existingRelations = contractAdvisors.filter(ca => ca.contractId === id);
-      const existingAdvisorIds = existingRelations.map(ca => ca.advisorId);
+      const existingAdvisorIds = existingRelations.map(ca => String(ca.advisorId));
 
       // Determine which to add and remove
       const toAdd = advisorIds.filter(id => !existingAdvisorIds.includes(id));
-      const toRemove = existingRelations.filter(ca => !advisorIds.includes(ca.advisorId));
+      const toRemove = existingRelations.filter(ca => !advisorIds.includes(String(ca.advisorId)));
 
       // Remove old relationships
       await Promise.all(
@@ -115,7 +115,7 @@ export function ContractsPage() {
   });
 
   const deleteContractMutation = useMutation({
-    mutationFn: async (id: number) => {
+    mutationFn: async (id: string) => {
       // Delete all contract-advisor relationships first
       const relations = contractAdvisors.filter(ca => ca.contractId === id);
       await Promise.all(
@@ -131,7 +131,7 @@ export function ContractsPage() {
     },
   });
 
-  const handleSubmit = (data: ContractFormData, advisorIds: number[]) => {
+  const handleSubmit = (data: ContractFormData, advisorIds: string[]) => {
     if (editingContract?.id) {
       updateContractMutation.mutate({ 
         id: editingContract.id, 
@@ -148,12 +148,12 @@ export function ContractsPage() {
     // Get advisor IDs for this contract
     const advisorIds = contractAdvisors
       .filter(ca => ca.contractId === contract.id)
-      .map(ca => ca.advisorId);
+      .map(ca => String(ca.advisorId));
     setEditingAdvisorIds(advisorIds);
     setIsFormOpen(true);
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = (id: string) => {
     if (window.confirm('Are you sure you want to delete this contract? This will also remove all advisor associations.')) {
       deleteContractMutation.mutate(id);
     }

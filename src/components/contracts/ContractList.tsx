@@ -6,17 +6,17 @@ interface ContractListProps {
   clients: Client[];
   advisors: Advisor[];
   onEdit: (contract: Contract) => void;
-  onDelete: (id: number) => void;
+  onDelete: (id: string) => void;
 }
 
 export function ContractList({ contracts, clients, advisors, onEdit, onDelete }: ContractListProps) {
-  const getClientName = (clientId: number) => {
-    const client = clients.find(c => c.id === clientId);
+  const getClientName = (clientId: string) => {
+    const client = clients.find(c => String(c.id) === clientId);
     return client ? `${client.name} ${client.surname}` : 'Unknown';
   };
 
-  const getAdvisorName = (advisorId: number) => {
-    const advisor = advisors.find(a => a.id === advisorId);
+  const getAdvisorName = (advisorId: string) => {
+    const advisor = advisors.find(a => String(a.id) === advisorId);
     return advisor ? `${advisor.name} ${advisor.surname}` : 'Unknown';
   };
 
@@ -64,7 +64,7 @@ export function ContractList({ contracts, clients, advisors, onEdit, onDelete }:
                   to={`/clients/${contract.clientId}`}
                   className="text-indigo-600 hover:text-indigo-900"
                 >
-                  {getClientName(contract.clientId)}
+                  {getClientName(String(contract.clientId))}
                 </Link>
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -72,7 +72,7 @@ export function ContractList({ contracts, clients, advisors, onEdit, onDelete }:
                   to={`/advisors/${contract.administratorId}`}
                   className="text-indigo-600 hover:text-indigo-900"
                 >
-                  {getAdvisorName(contract.administratorId)}
+                  {getAdvisorName(String(contract.administratorId))}
                 </Link>
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -86,7 +86,7 @@ export function ContractList({ contracts, clients, advisors, onEdit, onDelete }:
                   Edit
                 </button>
                 <button
-                  onClick={() => contract.id && onDelete(contract.id)}
+                  onClick={() => contract.id && onDelete(String(contract.id))}
                   className="text-red-600 hover:text-red-900"
                 >
                   Delete
