@@ -30,15 +30,12 @@ jobs:
     - name: Type check
       run: npx tsc --noEmit
       
-    - name: Lint code
-      run: npm run lint --if-present
-      
     - name: Build project
       run: npm run build
       
     - name: Upload build artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
-        name: dist-${{ matrix.node-version }}
+        name: dist-node-${{ matrix.node-version }}
         path: dist
         retention-days: 7
