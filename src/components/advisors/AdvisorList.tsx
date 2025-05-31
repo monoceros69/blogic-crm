@@ -4,7 +4,7 @@ import { type Advisor } from '../../types';
 interface AdvisorListProps {
   advisors: Advisor[];
   onEdit: (advisor: Advisor) => void;
-  onDelete: (id: number) => void;
+  onDelete: (id: string) => void;
 }
 
 export function AdvisorList({ advisors, onEdit, onDelete }: AdvisorListProps) {

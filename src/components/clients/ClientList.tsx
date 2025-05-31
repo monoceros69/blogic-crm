@@ -4,7 +4,7 @@ import { type Client } from '../../types';
 interface ClientListProps {
   clients: Client[];
   onEdit: (client: Client) => void;
-  onDelete: (id: number) => void;
+  onDelete: (id: string) => void;
 }
 
 export function ClientList({ clients, onEdit, onDelete }: ClientListProps) {

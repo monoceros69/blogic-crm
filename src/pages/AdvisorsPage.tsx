@@ -28,7 +28,7 @@ export function AdvisorsPage() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: AdvisorFormData }) =>
+    mutationFn: ({ id, data }: { id: string; data: AdvisorFormData }) =>
       advisorsApi.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['advisors'] });
@@ -38,7 +38,7 @@ export function AdvisorsPage() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: (id: number) => advisorsApi.delete(id),
+    mutationFn: (id: string) => advisorsApi.delete(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['advisors'] });
     },
@@ -57,7 +57,7 @@ export function AdvisorsPage() {
     setIsFormOpen(true);
   };
 
-  const handleDelete = (id: number) => {
+  const handleDelete = (id: string) => {
     if (window.confirm('Are you sure you want to delete this advisor?')) {
       deleteMutation.mutate(id);
     }
