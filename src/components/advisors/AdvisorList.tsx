@@ -5,7 +5,7 @@ import { type Advisor } from '../../types';
 import { arrayToCsv, downloadCsv } from '../../utils/export';
 
 type SortDirection = 'asc' | 'desc' | null;
-type SortField = 'name' | 'email' | 'phone' | 'isAdmin' | null;
+type SortField = 'name' | 'email' | 'phone' | 'isAdmin' | 'ssn' | null;
 
 interface AdvisorListProps {
   advisors: Advisor[];
@@ -44,6 +44,10 @@ const AdvisorList: React.FC<AdvisorListProps> = ({ advisors, onEdit, onDelete })
         case 'isAdmin':
           aValue = a.isAdmin ? 1 : 0;
           bValue = b.isAdmin ? 1 : 0;
+          break;
+        case 'ssn':
+          aValue = a.ssn;
+          bValue = b.ssn;
           break;
         default:
           return 0;
@@ -87,6 +91,7 @@ const AdvisorList: React.FC<AdvisorListProps> = ({ advisors, onEdit, onDelete })
       { key: 'email', label: 'Email' },
       { key: 'phone', label: 'Phone' },
       { key: 'isAdmin', label: 'Is Admin' },
+      { key: 'ssn', label: 'SSN' },
     ];
 
     const csvString = arrayToCsv(sortedAdvisors, fields);
@@ -97,13 +102,13 @@ const AdvisorList: React.FC<AdvisorListProps> = ({ advisors, onEdit, onDelete })
     <div className="w-full">
       {/* Desktop Table View */}
       <div className="hidden md:block">
-        <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg">
-          <table className="w-full divide-y divide-gray-300">
+        <div className="overflow-x-auto shadow ring-1 ring-black ring-opacity-5 rounded-lg">
+          <table className="min-w-full divide-y divide-gray-300 table-fixed">
             <thead className="bg-gray-50">
               <tr>
                 <th 
                   scope="col" 
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  className="w-56 px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                   onClick={() => handleSort('name')}
                 >
                   <div className="flex items-center gap-1">
@@ -113,7 +118,7 @@ const AdvisorList: React.FC<AdvisorListProps> = ({ advisors, onEdit, onDelete })
                 </th>
                 <th 
                   scope="col" 
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  className="w-72 px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                   onClick={() => handleSort('email')}
                 >
                   <div className="flex items-center gap-1">
@@ -123,7 +128,7 @@ const AdvisorList: React.FC<AdvisorListProps> = ({ advisors, onEdit, onDelete })
                 </th>
                 <th 
                   scope="col" 
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  className="w-48 px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                   onClick={() => handleSort('phone')}
                 >
                   <div className="flex items-center gap-1">
@@ -133,12 +138,22 @@ const AdvisorList: React.FC<AdvisorListProps> = ({ advisors, onEdit, onDelete })
                 </th>
                 <th 
                   scope="col" 
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  className="w-32 px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                   onClick={() => handleSort('isAdmin')}
                 >
                   <div className="flex items-center gap-1">
                     Admin
                     {getSortIcon('isAdmin')}
+                  </div>
+                </th>
+                <th 
+                  scope="col" 
+                  className="w-48 px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  onClick={() => handleSort('ssn')}
+                >
+                  <div className="flex items-center gap-1">
+                    SSN
+                    {getSortIcon('ssn')}
                   </div>
                 </th>
                 <th scope="col" className="relative px-6 py-3">
@@ -148,7 +163,7 @@ const AdvisorList: React.FC<AdvisorListProps> = ({ advisors, onEdit, onDelete })
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {sortedAdvisors.map((advisor) => (
-                <tr key={advisor.id}>
+                <tr key={advisor.id} className="align-middle">
                   <td className="px-6 py-4 text-sm font-medium text-gray-900">
                     <Link
                       to={`/advisors/${advisor.id}`}
@@ -166,20 +181,27 @@ const AdvisorList: React.FC<AdvisorListProps> = ({ advisors, onEdit, onDelete })
                    <td className="px-6 py-4 text-sm text-gray-500">
                     {advisor.isAdmin ? 'Yes' : 'No'}
                   </td>
-                  <td className="px-6 py-4 text-right text-sm font-medium">
+                  <td className="px-6 py-4 text-sm text-gray-500">
+                    {advisor.ssn}
+                  </td>
+                  <td className="px-6 py-4 text-right text-sm font-medium align-middle">
                     <div className="flex flex-col items-end space-y-2">
-                      <button
-                        onClick={() => onEdit(advisor)}
-                        className="bg-green-500 hover:bg-green-600 text-white font-medium py-1.5 px-3 rounded-md w-24 text-center"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => advisor.id && onDelete(advisor.id)}
-                        className="bg-red-500 hover:bg-red-600 text-white font-medium py-1.5 px-3 rounded-md w-24 text-center"
-                      >
-                        Delete
-                      </button>
+                      {localStorage.getItem('isAdmin') === 'true' && (
+                        <>
+                          <button
+                            onClick={() => onEdit(advisor)}
+                            className="bg-green-500 hover:bg-green-600 text-white font-medium py-1.5 px-3 rounded-md w-24 text-center"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => advisor.id && onDelete(advisor.id)}
+                            className="bg-red-500 hover:bg-red-600 text-white font-medium py-1.5 px-3 rounded-md w-24 text-center"
+                          >
+                            Delete
+                          </button>
+                        </>
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -213,19 +235,27 @@ const AdvisorList: React.FC<AdvisorListProps> = ({ advisors, onEdit, onDelete })
                   <div className="text-gray-500">Admin</div>
                   <div className="break-words">{advisor.isAdmin ? 'Yes' : 'No'}</div>
                 </div>
+                <div className="grid grid-cols-2 gap-2 text-sm">
+                  <div className="text-gray-500">SSN</div>
+                  <div className="break-words">{advisor.ssn}</div>
+                </div>
                 <div className="flex -mx-4 -mb-4 pt-4 border-t border-gray-200">
-                  <button
-                    onClick={() => onEdit(advisor)}
-                    className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 w-1/2 text-center rounded-bl-lg"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => advisor.id && onDelete(advisor.id)}
-                    className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 w-1/2 text-center rounded-br-lg"
-                  >
-                    Delete
-                  </button>
+                  {localStorage.getItem('isAdmin') === 'true' && (
+                    <>
+                      <button
+                        onClick={() => onEdit(advisor)}
+                        className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 w-1/2 text-center rounded-bl-lg"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => advisor.id && onDelete(advisor.id)}
+                        className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 w-1/2 text-center rounded-br-lg"
+                      >
+                        Delete
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
             </div>

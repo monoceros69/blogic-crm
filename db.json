@@ -7,7 +7,7 @@
       "administratorId": "3",
       "conclusionDate": "2024-01-15",
       "validityDate": "2024-02-01",
-      "endingDate": "2025-02-01",
+      "endingDate": "2025-02-02",
       "id": "1"
     },
     {
@@ -129,16 +129,6 @@
       "ssn": "678901/2345",
       "age": 40,
       "isAdmin": true
-    },
-    {
-      "name": "kek",
-      "surname": "lmao",
-      "email": "lmaokek@asd.co",
-      "phone": "+421988595554",
-      "ssn": "488455/5454",
-      "age": 18,
-      "isAdmin": false,
-      "id": "c084"
     }
   ],
   "contractAdvisors": [
@@ -191,18 +181,25 @@
       "id": "71cf",
       "contractId": "b0d5",
       "advisorId": "1"
+    },
+    {
+      "id": "37c3",
+      "contractId": "1",
+      "advisorId": "3"
     }
   ],
   "users": [
     {
       "id": "1",
       "username": "admin",
-      "password": "password123"
+      "password": "$2a$04$3GkOET6My/pkd0h3ExuC/udlzCO1rKnJUDLEecyHaOq1NeaiMaXT2",
+      "isAdmin": true
     },
     {
       "id": "2",
       "username": "user",
-      "password": "password456"
+      "password": "$2a$04$.X8YPUN4Bp6b03rn.t5i4.Q4wElloaQNNoGNrKMcpQXqz1wcvbvCi",
+      "isAdmin": false
     }
   ]
 }

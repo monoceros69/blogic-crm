@@ -5,6 +5,16 @@
 
 A proof-of-concept React application for managing contracts, clients, and advisors. Built with React, TypeScript, React Hook Form, Zod, and json-server for mock API.
 
+## Placeholder accounts for user authentication (*Passwords have been hashed with Bcrypt - 1 round*)
+
+### Admin account (Full permissions)
+- **Username:** admin
+- **Password:** password123
+
+### User account (Read-Only)
+- **Username:** user
+- **Password:** password456
+
 ## Features
 
 ### Core Functionality

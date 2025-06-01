@@ -135,11 +135,11 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, clients, advisor
       <div className="hidden md:block">
         <div className="overflow-x-auto shadow ring-1 ring-black ring-opacity-5 rounded-lg">
           <table className="min-w-full divide-y divide-gray-300">
-            <thead className="bg-gray-50">
+            <thead className="bg-gray-50 min-w-[1200px]">
               <tr>
                 <th 
                   scope="col" 
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 w-36"
                   onClick={() => handleSort('registrationNumber')}
                 >
                   <div className="flex items-center gap-1">
@@ -149,7 +149,7 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, clients, advisor
                 </th>
                 <th 
                   scope="col" 
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                   onClick={() => handleSort('institution')}
                 >
                   <div className="flex items-center gap-1">
@@ -159,7 +159,7 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, clients, advisor
                 </th>
                 <th 
                   scope="col" 
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                   onClick={() => handleSort('clientName')}
                 >
                   <div className="flex items-center gap-1">
@@ -169,7 +169,7 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, clients, advisor
                 </th>
                 <th 
                   scope="col" 
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                   onClick={() => handleSort('assignedAdvisors')}
                 >
                   <div className="flex items-center gap-1">
@@ -179,7 +179,7 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, clients, advisor
                 </th>
                 <th 
                   scope="col" 
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                   onClick={() => handleSort('administratorName')}
                 >
                   <div className="flex items-center gap-1">
@@ -189,7 +189,7 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, clients, advisor
                 </th>
                 <th 
                   scope="col" 
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
                   onClick={() => handleSort('validityDate')}
                 >
                   <div className="flex items-center gap-1">
@@ -204,8 +204,8 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, clients, advisor
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {sortedContracts.map((contract) => (
-                <tr key={contract.id}>
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                <tr key={contract.id} className="align-middle">
+                  <td className="px-3 py-4 text-sm font-medium text-gray-900 text-center">
                     <Link
                       to={`/contracts/${contract.id}`}
                       className="text-indigo-600 hover:text-indigo-900"
@@ -247,23 +247,27 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, clients, advisor
                       {getAdvisorName(String(contract.administratorId))}
                     </Link>
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-500">
+                  <td className="px-6 py-4 text-sm text-gray-500 align-middle">
                     {new Date(contract.validityDate).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4 text-right text-sm font-medium">
                     <div className="flex flex-col items-end space-y-2">
-                      <button
-                        onClick={() => onEdit(contract)}
-                        className="bg-green-500 hover:bg-green-600 text-white font-medium py-1.5 px-3 rounded-md w-full text-center"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => contract.id && onDelete(String(contract.id))}
-                        className="bg-red-500 hover:bg-red-600 text-white font-medium py-1.5 px-3 rounded-md w-full text-center"
-                      >
-                        Delete
-                      </button>
+                      {localStorage.getItem('isAdmin') === 'true' && (
+                        <>
+                          <button
+                            onClick={() => onEdit(contract)}
+                            className="bg-green-500 hover:bg-green-600 text-white font-medium py-1.5 px-3 rounded-md w-full text-center"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={() => contract.id && onDelete(String(contract.id))}
+                            className="bg-red-500 hover:bg-red-600 text-white font-medium py-1.5 px-3 rounded-md w-full text-center"
+                          >
+                            Delete
+                          </button>
+                        </>
+                      )}
                     </div>
                   </td>
                 </tr>
@@ -332,18 +336,22 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, clients, advisor
                   <div>{new Date(contract.validityDate).toLocaleDateString()}</div>
                 </div>
                 <div className="flex -mx-4 -mb-4 mt-4 border-t border-gray-200">
-                  <button
-                    onClick={() => onEdit(contract)}
-                    className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 w-1/2 text-center rounded-bl-lg"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => contract.id && onDelete(String(contract.id))}
-                    className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 w-1/2 text-center rounded-br-lg"
-                  >
-                    Delete
-                  </button>
+                  {localStorage.getItem('isAdmin') === 'true' && (
+                    <>
+                      <button
+                        onClick={() => onEdit(contract)}
+                        className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 w-1/2 text-center rounded-bl-lg"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => contract.id && onDelete(String(contract.id))}
+                        className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 w-1/2 text-center rounded-br-lg"
+                      >
+                        Delete
+                      </button>
+                    </>
+                  )}
                 </div>
               </div>
             </div>

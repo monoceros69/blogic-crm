@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import bcrypt from 'bcryptjs';
 
 export function LoginPage() {
   const [username, setUsername] = useState('');
@@ -15,12 +16,13 @@ export function LoginPage() {
       const response = await fetch('/api/users');
       const users = await response.json();
 
-      const user = users.find((u: any) => u.username === username && u.password === password);
+      const user = users.find((u: any) => u.username === username);
 
-      if (user) {
+      if (user && await bcrypt.compare(password, user.password)) {
         // Basic login successful - store login state (e.g., in localStorage)
         localStorage.setItem('isLoggedIn', 'true');
         localStorage.setItem('loggedInUser', JSON.stringify(user));
+        localStorage.setItem('isAdmin', String(user.isAdmin)); // Store admin status
         window.location.replace('/contracts'); // Force redirect to the contracts page
       } else {
         setError('Invalid username or password');
