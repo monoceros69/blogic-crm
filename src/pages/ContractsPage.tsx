@@ -12,6 +12,12 @@ export function ContractsPage() {
   const [editingContract, setEditingContract] = useState<Contract | undefined>();
   const [editingAdvisorIds, setEditingAdvisorIds] = useState<string[]>([]);
 
+  // State for filters
+  const [selectedInstitutions, setSelectedInstitutions] = useState<string[]>([]);
+  const [selectedClients, setSelectedClients] = useState<string[]>([]);
+  const [selectedAdvisors, setSelectedAdvisors] = useState<string[]>([]);
+  const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
+
   const { data: contracts = [], isLoading: contractsLoading } = useQuery({
     queryKey: ['contracts'],
     queryFn: async () => {
@@ -187,6 +193,17 @@ export function ContractsPage() {
     setEditingAdvisorIds([]);
   };
 
+  // Filter logic
+  const filteredContracts = contracts.filter(contract => {
+    const institutionMatch = selectedInstitutions.length === 0 || selectedInstitutions.includes(contract.institution);
+    const clientMatch = selectedClients.length === 0 || selectedClients.includes(String(contract.clientId));
+    const advisorMatch = selectedAdvisors.length === 0 ||
+      contractAdvisors.some(ca =>
+        ca.contractId === contract.id && selectedAdvisors.includes(String(ca.advisorId))
+      );
+    return institutionMatch && clientMatch && advisorMatch;
+  });
+
   if (contractsLoading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -215,6 +232,126 @@ export function ContractsPage() {
         </div>
       </div>
 
+      {/* Filter Controls */}
+      <div className="mt-6 relative inline-block text-left">
+        <div>
+          <button
+            type="button"
+            className="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500"
+            id="options-menu"
+            aria-haspopup="true"
+            aria-expanded="true"
+            onClick={() => setIsFilterDropdownOpen(!isFilterDropdownOpen)}
+          >
+            Filter
+            {/* Dropdown arrow */}
+            <svg className="-mr-1 ml-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+              <path fillRule="evenodd" d="M5.293 9.293a1 1 0 011.414 0L10 12.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Filter Dropdown */}
+        {isFilterDropdownOpen && (
+          <div className="origin-top-left absolute left-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+            <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
+              {/* Institution Filter */}
+              <div className="px-4 py-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Institution</label>
+                <div className="space-y-2">
+                  {['ČSOB', 'AEGON', 'Axa', 'Other'].map(institution => (
+                    <div key={institution} className="relative flex items-start">
+                      <div className="flex items-center h-5">
+                        <input
+                          id={`institution-${institution}`}
+                          name="institution-filter"
+                          type="checkbox"
+                          className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                          value={institution}
+                          checked={selectedInstitutions.includes(institution)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedInstitutions([...selectedInstitutions, institution]);
+                            } else {
+                              setSelectedInstitutions(selectedInstitutions.filter(item => item !== institution));
+                            }
+                          }}
+                        />
+                      </div>
+                      <div className="ml-3 text-sm">
+                        <label htmlFor={`institution-${institution}`} className="font-medium text-gray-700">{institution}</label>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Client Filter */}
+              <div className="px-4 py-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Client</label>
+                <div className="space-y-2 max-h-40 overflow-y-auto">
+                  {clients.map(client => (
+                    <div key={client.id} className="relative flex items-start">
+                      <div className="flex items-center h-5">
+                        <input
+                          id={`client-${client.id}`}
+                          name="client-filter"
+                          type="checkbox"
+                          className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                          value={client.id}
+                          checked={selectedClients.includes(String(client.id))}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedClients([...selectedClients, String(client.id)]);
+                            } else {
+                              setSelectedClients(selectedClients.filter(id => id !== String(client.id)));
+                            }
+                          }}
+                        />
+                      </div>
+                      <div className="ml-3 text-sm">
+                        <label htmlFor={`client-${client.id}`} className="font-medium text-gray-700">{client.name} {client.surname}</label>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Advisor Filter */}
+              <div className="px-4 py-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">Advisor</label>
+                <div className="space-y-2 max-h-40 overflow-y-auto">
+                  {advisors.map(advisor => (
+                    <div key={advisor.id} className="relative flex items-start">
+                      <div className="flex items-center h-5">
+                        <input
+                          id={`advisor-${advisor.id}`}
+                          name="advisor-filter"
+                          type="checkbox"
+                          className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded"
+                          value={advisor.id}
+                          checked={selectedAdvisors.includes(String(advisor.id))}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedAdvisors([...selectedAdvisors, String(advisor.id)]);
+                            } else {
+                              setSelectedAdvisors(selectedAdvisors.filter(id => id !== String(advisor.id)));
+                            }
+                          }}
+                        />
+                      </div>
+                      <div className="ml-3 text-sm">
+                        <label htmlFor={`advisor-${advisor.id}`} className="font-medium text-gray-700">{advisor.name} {advisor.surname}</label>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
       {isFormOpen && (
         <div className="mt-8 bg-white shadow sm:rounded-lg">
           <div className="px-4 py-5 sm:p-6">
@@ -235,7 +372,7 @@ export function ContractsPage() {
 
       <div className="mt-8">
         <ContractList
-          contracts={contracts}
+          contracts={filteredContracts}
           clients={clients}
           advisors={advisors}
           onEdit={handleEdit}
