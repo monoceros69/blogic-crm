@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { ClientList } from '../components/clients/ClientList';
+import ClientList from '../components/clients/ClientList';
 import { ClientForm } from '../components/clients/ClientForm';
 import { clientsApi } from '../services/api';
 import { type Client } from '../types';
