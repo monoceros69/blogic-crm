@@ -46,7 +46,7 @@ This will run:
 
 ```
 src/
-├── components/         # Reusable components
+├── components/        # Reusable components
 │   ├── clients/       # Client-specific components
 │   ├── advisors/      # Advisor-specific components
 │   └── contracts/     # Contract-specific components
@@ -54,7 +54,7 @@ src/
 ├── services/          # API service layer
 ├── types/             # TypeScript type definitions
 ├── schemas/           # Zod validation schemas
-└── App.tsx           # Main app component
+└── App.tsx            # Main app component
 ```
 
 ## API Endpoints
