@@ -13,8 +13,14 @@ This project demonstrates core CRUD functionalities, form validation, many-to-ma
 - [User Guide](USER_GUIDE.md): Learn how to use the application, including placeholder accounts and features.
 - [Technical Documentation](TECHNICAL_DOCS.md): Get an in-depth understanding of the project's tech stack, structure, APIs, and development details.
 
-![Showcase of the Desktop UI](public/CRM-desktop.png)
-![Showcase of the Mobile UI](public/CRM-mobile.png)
+## Desktop UI:
+<div align="center">
+   <img src="public/CRM-desktop.png" alt="Screenshot of the Desktop UI" width="500"/>
+</div>
+## Mobile UI:
+<div align="center">
+   <img src="public/CRM-mobile.png" alt="Screenshot of the Mobile UI" width="200"/>
+</div>
 
 ## License
 
