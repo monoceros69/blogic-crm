@@ -1,5 +1,10 @@
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { FaSort, FaSortUp, FaSortDown } from 'react-icons/fa';
 import { type Client } from '../../types';
+
+type SortDirection = 'asc' | 'desc' | null;
+type SortField = 'name' | 'email' | 'phone' | 'age' | null;
 
 interface ClientListProps {
   clients: Client[];
@@ -7,7 +12,73 @@ interface ClientListProps {
   onDelete: (id: string) => void;
 }
 
-export function ClientList({ clients, onEdit, onDelete }: ClientListProps) {
+const ClientList: React.FC<ClientListProps> = ({ clients, onEdit, onDelete }) => {
+  const [sortField, setSortField] = useState<SortField>(null);
+  const [sortDirection, setSortDirection] = useState<SortDirection>(null);
+  const [sortedClients, setSortedClients] = useState<Client[]>(clients);
+
+  useEffect(() => {
+    if (!sortField || !sortDirection) {
+      setSortedClients(clients);
+      return;
+    }
+
+    const sorted = [...clients].sort((a, b) => {
+      let aValue: any;
+      let bValue: any;
+
+      switch (sortField) {
+        case 'name':
+          aValue = `${a.name} ${a.surname}`;
+          bValue = `${b.name} ${b.surname}`;
+          break;
+        case 'email':
+          aValue = a.email;
+          bValue = b.email;
+          break;
+        case 'phone':
+          aValue = a.phone;
+          bValue = b.phone;
+          break;
+        case 'age':
+          aValue = a.age;
+          bValue = b.age;
+          break;
+        default:
+          return 0;
+      }
+
+      if (sortDirection === 'asc') {
+        return aValue > bValue ? 1 : -1;
+      } else {
+        return aValue < bValue ? 1 : -1;
+      }
+    });
+
+    setSortedClients(sorted);
+  }, [clients, sortField, sortDirection]);
+
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      if (sortDirection === 'asc') {
+        setSortDirection('desc');
+      } else if (sortDirection === 'desc') {
+        setSortField(null);
+        setSortDirection(null);
+      } else {
+        setSortDirection('asc');
+      }
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
+
+  const getSortIcon = (field: SortField) => {
+    if (sortField !== field) return <div className="text-gray-400"><FaSort /></div>;
+    return sortDirection === 'asc' ? <div className="text-blue-500"><FaSortUp /></div> : <div className="text-blue-500"><FaSortDown /></div>;
+  };
+
   return (
     <div className="w-full">
       {/* Desktop Table View */}
@@ -16,25 +87,53 @@ export function ClientList({ clients, onEdit, onDelete }: ClientListProps) {
           <table className="w-full divide-y divide-gray-300">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Name
+                <th 
+                  scope="col" 
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  onClick={() => handleSort('name')}
+                >
+                  <div className="flex items-center gap-1">
+                    Name
+                    {getSortIcon('name')}
+                  </div>
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Email
+                <th 
+                  scope="col" 
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  onClick={() => handleSort('email')}
+                >
+                  <div className="flex items-center gap-1">
+                    Email
+                    {getSortIcon('email')}
+                  </div>
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Phone
+                <th 
+                  scope="col" 
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  onClick={() => handleSort('phone')}
+                >
+                  <div className="flex items-center gap-1">
+                    Phone
+                    {getSortIcon('phone')}
+                  </div>
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Age
+                <th 
+                  scope="col" 
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  onClick={() => handleSort('age')}
+                >
+                  <div className="flex items-center gap-1">
+                    Age
+                    {getSortIcon('age')}
+                  </div>
                 </th>
-                <th className="relative px-6 py-3">
+                <th scope="col" className="relative px-6 py-3">
                   <span className="sr-only">Actions</span>
                 </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {clients.map((client) => (
+              {sortedClients.map((client) => (
                 <tr key={client.id}>
                   <td className="px-6 py-4 text-sm font-medium text-gray-900">
                     <Link
@@ -121,4 +220,6 @@ export function ClientList({ clients, onEdit, onDelete }: ClientListProps) {
       </div>
     </div>
   );
-}
+};
+
+export default ClientList;

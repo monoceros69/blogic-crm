@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { AdvisorList } from '../components/advisors/AdvisorList';
+import AdvisorList from '../components/advisors/AdvisorList';
 import { AdvisorForm } from '../components/advisors/AdvisorForm';
 import { advisorsApi } from '../services/api';
 import { type Advisor } from '../types';

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { ContractList } from '../components/contracts/ContractList';
+import ContractList from '../components/contracts/ContractList';
 import { ContractForm } from '../components/contracts/ContractForm';
 import { contractsApi, clientsApi, advisorsApi, contractAdvisorsApi } from '../services/api';
 import { type Contract } from '../types';

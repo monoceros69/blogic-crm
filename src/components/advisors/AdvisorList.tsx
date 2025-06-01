@@ -1,5 +1,10 @@
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { FaSort, FaSortUp, FaSortDown } from 'react-icons/fa';
 import { type Advisor } from '../../types';
+
+type SortDirection = 'asc' | 'desc' | null;
+type SortField = 'name' | 'email' | 'phone' | 'isAdmin' | null;
 
 interface AdvisorListProps {
   advisors: Advisor[];
@@ -7,7 +12,73 @@ interface AdvisorListProps {
   onDelete: (id: string) => void;
 }
 
-export function AdvisorList({ advisors, onEdit, onDelete }: AdvisorListProps) {
+const AdvisorList: React.FC<AdvisorListProps> = ({ advisors, onEdit, onDelete }) => {
+  const [sortField, setSortField] = useState<SortField>(null);
+  const [sortDirection, setSortDirection] = useState<SortDirection>(null);
+  const [sortedAdvisors, setSortedAdvisors] = useState<Advisor[]>(advisors);
+
+  useEffect(() => {
+    if (!sortField || !sortDirection) {
+      setSortedAdvisors(advisors);
+      return;
+    }
+
+    const sorted = [...advisors].sort((a, b) => {
+      let aValue: any;
+      let bValue: any;
+
+      switch (sortField) {
+        case 'name':
+          aValue = `${a.name} ${a.surname}`;
+          bValue = `${b.name} ${b.surname}`;
+          break;
+        case 'email':
+          aValue = a.email;
+          bValue = b.email;
+          break;
+        case 'phone':
+          aValue = a.phone;
+          bValue = b.phone;
+          break;
+        case 'isAdmin':
+          aValue = a.isAdmin ? 1 : 0;
+          bValue = b.isAdmin ? 1 : 0;
+          break;
+        default:
+          return 0;
+      }
+
+      if (sortDirection === 'asc') {
+        return aValue > bValue ? 1 : -1;
+      } else {
+        return aValue < bValue ? 1 : -1;
+      }
+    });
+
+    setSortedAdvisors(sorted);
+  }, [advisors, sortField, sortDirection]);
+
+  const handleSort = (field: SortField) => {
+    if (sortField === field) {
+      if (sortDirection === 'asc') {
+        setSortDirection('desc');
+      } else if (sortDirection === 'desc') {
+        setSortField(null);
+        setSortDirection(null);
+      } else {
+        setSortDirection('asc');
+      }
+    } else {
+      setSortField(field);
+      setSortDirection('asc');
+    }
+  };
+
+  const getSortIcon = (field: SortField) => {
+    if (sortField !== field) return <div className="text-gray-400"><FaSort /></div>;
+    return sortDirection === 'asc' ? <div className="text-blue-500"><FaSortUp /></div> : <div className="text-blue-500"><FaSortDown /></div>;
+  };
+
   return (
     <div className="w-full">
       {/* Desktop Table View */}
@@ -16,25 +87,53 @@ export function AdvisorList({ advisors, onEdit, onDelete }: AdvisorListProps) {
           <table className="w-full divide-y divide-gray-300">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Name
+                <th 
+                  scope="col" 
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  onClick={() => handleSort('name')}
+                >
+                  <div className="flex items-center gap-1">
+                    Name
+                    {getSortIcon('name')}
+                  </div>
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Email
+                <th 
+                  scope="col" 
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  onClick={() => handleSort('email')}
+                >
+                  <div className="flex items-center gap-1">
+                    Email
+                    {getSortIcon('email')}
+                  </div>
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Phone
+                <th 
+                  scope="col" 
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  onClick={() => handleSort('phone')}
+                >
+                  <div className="flex items-center gap-1">
+                    Phone
+                    {getSortIcon('phone')}
+                  </div>
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Admin
+                <th 
+                  scope="col" 
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  onClick={() => handleSort('isAdmin')}
+                >
+                  <div className="flex items-center gap-1">
+                    Admin
+                    {getSortIcon('isAdmin')}
+                  </div>
                 </th>
-                <th className="relative px-6 py-3">
+                <th scope="col" className="relative px-6 py-3">
                   <span className="sr-only">Actions</span>
                 </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {advisors.map((advisor) => (
+              {sortedAdvisors.map((advisor) => (
                 <tr key={advisor.id}>
                   <td className="px-6 py-4 text-sm font-medium text-gray-900">
                     <Link
@@ -79,7 +178,7 @@ export function AdvisorList({ advisors, onEdit, onDelete }: AdvisorListProps) {
       {/* Mobile Card View */}
       <div className="md:hidden">
         <div className="space-y-4">
-          {advisors.map((advisor) => (
+          {sortedAdvisors.map((advisor) => (
             <div key={advisor.id} className="bg-white shadow rounded-lg p-4">
               <div className="space-y-3">
                 <div>
@@ -100,7 +199,7 @@ export function AdvisorList({ advisors, onEdit, onDelete }: AdvisorListProps) {
                   <div className="text-gray-500">Admin</div>
                   <div className="break-words">{advisor.isAdmin ? 'Yes' : 'No'}</div>
                 </div>
-                <div className="flex -mx-4 -mb-4 mt-4border-t border-gray-200">
+                <div className="flex -mx-4 -mb-4 pt-4 border-t border-gray-200">
                   <button
                     onClick={() => onEdit(advisor)}
                     className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 w-1/2 text-center rounded-bl-lg"
@@ -121,4 +220,6 @@ export function AdvisorList({ advisors, onEdit, onDelete }: AdvisorListProps) {
       </div>
     </div>
   );
-}
+};
+
+export default AdvisorList;

@@ -1,14 +1,14 @@
 {
   "contracts": [
     {
-      "id": "1",
       "registrationNumber": "2024-001",
       "institution": "ČSOB",
-      "clientId": 1,
-      "administratorId": 1,
+      "clientId": "1",
+      "administratorId": "3",
       "conclusionDate": "2024-01-15",
       "validityDate": "2024-02-01",
-      "endingDate": "2025-02-01"
+      "endingDate": "2025-02-01",
+      "id": "1"
     },
     {
       "id": "2",
@@ -39,6 +39,16 @@
       "conclusionDate": "2025-05-22",
       "validityDate": "2025-05-29",
       "endingDate": "2025-05-31"
+    },
+    {
+      "registrationNumber": "69-420",
+      "institution": "Axa",
+      "clientId": "3",
+      "administratorId": "1",
+      "conclusionDate": "2025-05-14",
+      "validityDate": "2025-06-19",
+      "endingDate": "2025-06-27",
+      "id": "ee09"
     }
   ],
   "clients": [
@@ -68,6 +78,15 @@
       "phone": "+421900111222",
       "ssn": "345678/9012",
       "age": 28
+    },
+    {
+      "id": "0a75",
+      "name": "Robert",
+      "surname": "Lox",
+      "email": "roblox@lmao.com",
+      "phone": "+421548798985",
+      "ssn": "123456/7889",
+      "age": 22
     }
   ],
   "advisors": [
@@ -147,6 +166,16 @@
       "id": "69d8",
       "contractId": "e443",
       "advisorId": "1"
+    },
+    {
+      "id": "5903",
+      "contractId": "ee09",
+      "advisorId": "1"
+    },
+    {
+      "id": "e8f2",
+      "contractId": "ee09",
+      "advisorId": "3"
     }
   ]
 }
