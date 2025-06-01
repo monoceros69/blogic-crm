@@ -139,7 +139,7 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, clients, advisor
               <tr>
                 <th 
                   scope="col" 
-                  className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 w-36"
+                  className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase select-none tracking-wider cursor-pointer hover:bg-gray-100 w-36"
                   onClick={() => handleSort('registrationNumber')}
                 >
                   <div className="flex items-center gap-1">
@@ -149,7 +149,7 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, clients, advisor
                 </th>
                 <th 
                   scope="col" 
-                  className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase select-none tracking-wider cursor-pointer hover:bg-gray-100"
                   onClick={() => handleSort('institution')}
                 >
                   <div className="flex items-center gap-1">
@@ -159,7 +159,7 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, clients, advisor
                 </th>
                 <th 
                   scope="col" 
-                  className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase select-none tracking-wider cursor-pointer hover:bg-gray-100"
                   onClick={() => handleSort('clientName')}
                 >
                   <div className="flex items-center gap-1">
@@ -169,7 +169,7 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, clients, advisor
                 </th>
                 <th 
                   scope="col" 
-                  className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase select-none tracking-wider cursor-pointer hover:bg-gray-100"
                   onClick={() => handleSort('assignedAdvisors')}
                 >
                   <div className="flex items-center gap-1">
@@ -179,7 +179,7 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, clients, advisor
                 </th>
                 <th 
                   scope="col" 
-                  className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase select-none tracking-wider cursor-pointer hover:bg-gray-100"
                   onClick={() => handleSort('administratorName')}
                 >
                   <div className="flex items-center gap-1">
@@ -189,7 +189,7 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, clients, advisor
                 </th>
                 <th 
                   scope="col" 
-                  className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase select-none tracking-wider cursor-pointer hover:bg-gray-100"
                   onClick={() => handleSort('validityDate')}
                 >
                   <div className="flex items-center gap-1">

@@ -12,6 +12,7 @@ export function ContractsPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingContract, setEditingContract] = useState<Contract | undefined>();
   const [editingAdvisorIds, setEditingAdvisorIds] = useState<string[]>([]);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   // State for filters
   const [selectedInstitutions, setSelectedInstitutions] = useState<string[]>([]);
@@ -81,6 +82,9 @@ export function ContractsPage() {
       queryClient.invalidateQueries({ queryKey: ['contracts'] });
       queryClient.invalidateQueries({ queryKey: ['contractAdvisors'] });
       setIsFormOpen(false);
+      setHasUnsavedChanges(false);
+      setEditingContract(undefined);
+      setEditingAdvisorIds([]);
     },
     onError: (error) => {
       alert(error.message);
@@ -137,6 +141,7 @@ export function ContractsPage() {
       setIsFormOpen(false);
       setEditingContract(undefined);
       setEditingAdvisorIds([]);
+      setHasUnsavedChanges(false);
     },
     onError: (error) => {
       alert(error.message);
@@ -173,13 +178,26 @@ export function ContractsPage() {
   };
 
   const handleEdit = (contract: Contract) => {
-    setEditingContract(contract);
-    // Get advisor IDs for this contract
-    const advisorIds = contractAdvisors
-      .filter(ca => ca.contractId === contract.id)
-      .map(ca => String(ca.advisorId));
-    setEditingAdvisorIds(advisorIds);
-    setIsFormOpen(true);
+    if (hasUnsavedChanges) {
+      if (window.confirm('You have unsaved changes. Do you want to discard them and edit a different contract?')) {
+        setEditingContract(contract);
+        // Get advisor IDs for this contract
+        const advisorIds = contractAdvisors
+          .filter(ca => ca.contractId === contract.id)
+          .map(ca => String(ca.advisorId));
+        setEditingAdvisorIds(advisorIds);
+        setHasUnsavedChanges(false);
+        setIsFormOpen(true);
+      }
+    } else {
+      setEditingContract(contract);
+      // Get advisor IDs for this contract
+      const advisorIds = contractAdvisors
+        .filter(ca => ca.contractId === contract.id)
+        .map(ca => String(ca.advisorId));
+      setEditingAdvisorIds(advisorIds);
+      setIsFormOpen(true);
+    }
   };
 
   const handleDelete = (id: string) => {
@@ -189,9 +207,22 @@ export function ContractsPage() {
   };
 
   const handleCancel = () => {
-    setIsFormOpen(false);
-    setEditingContract(undefined);
-    setEditingAdvisorIds([]);
+    if (hasUnsavedChanges) {
+      if (window.confirm('You have unsaved changes. Do you want to discard them?')) {
+        setIsFormOpen(false);
+        setEditingContract(undefined);
+        setEditingAdvisorIds([]);
+        setHasUnsavedChanges(false);
+      }
+    } else {
+      setIsFormOpen(false);
+      setEditingContract(undefined);
+      setEditingAdvisorIds([]);
+    }
+  };
+
+  const handleFormChange = (hasChanges: boolean) => {
+    setHasUnsavedChanges(hasChanges);
   };
 
   // Filter logic
@@ -219,47 +250,59 @@ export function ContractsPage() {
       { key: 'clientName', label: 'Client Name' },
       { key: 'administratorId', label: 'Administrator ID' },
       { key: 'administratorName', label: 'Administrator Name' },
+      { key: 'assignedAdvisors', label: 'Assigned Advisors' },
       { key: 'validityDate', label: 'Validity Date' },
       { key: 'conclusionDate', label: 'Conclusion Date' },
       { key: 'endingDate', label: 'Ending Date' },
-    ] as { key: keyof (Contract & { clientName: string; administratorName: string }), label: string }[];
+    ] as { key: keyof (Contract & { clientName: string; administratorName: string; assignedAdvisors: string }), label: string }[];
 
-    const contractsWithNames = allContracts.map(contract => {
+    const contractsWithNamesAndAdvisors = allContracts.map(contract => {
       const client = allClients.find(c => String(c.id) === String(contract.clientId));
       const administrator = allAdvisors.find(a => String(a.id) === String(contract.administratorId));
+      const assignedAdvisorNames = contractAdvisors
+        .filter(ca => ca.contractId === contract.id)
+        .map(ca => allAdvisors.find(a => String(a.id) === String(ca.advisorId)))
+        .filter(advisor => advisor !== undefined)
+        .map(advisor => `${advisor!.name} ${advisor!.surname}`)
+        .join(', ');
+
       return {
         ...contract,
         clientId: String(contract.clientId),
         clientName: client ? `${client.name} ${client.surname}` : 'Unknown',
         administratorId: String(contract.administratorId),
-        administratorName: administrator ? `${administrator.name} ${administrator.surname}` : 'Unknown'
+        administratorName: administrator ? `${administrator.name} ${administrator.surname}` : 'Unknown',
+        assignedAdvisors: assignedAdvisorNames
       };
     });
-    const contractsCsv = arrayToCsv(contractsWithNames, contractFields);
+    const contractsCsv = arrayToCsv(contractsWithNamesAndAdvisors, contractFields);
 
     // Prepare and Export Clients
-    const clientFields: { key: keyof Client, label: string }[] = [
+    const clientFields: { key: keyof Client | 'ssn', label: string }[] = [
       { key: 'name', label: 'First Name' },
       { key: 'surname', label: 'Surname' },
       { key: 'email', label: 'Email' },
       { key: 'phone', label: 'Phone' },
       { key: 'age', label: 'Age' },
+      { key: 'ssn', label: 'SSN' },
     ];
     const clientsCsv = arrayToCsv(allClients, clientFields);
 
     // Prepare and Export Advisors
-    const advisorFields: { key: keyof Advisor, label: string }[] = [
+    const advisorFields: { key: keyof Advisor | 'ssn', label: string }[] = [
       { key: 'name', label: 'First Name' },
       { key: 'surname', label: 'Surname' },
       { key: 'email', label: 'Email' },
       { key: 'phone', label: 'Phone' },
+      { key: 'age', label: 'Age' },
+      { key: 'ssn', label: 'SSN' },
       { key: 'isAdmin', label: 'Is Admin' },
     ];
     const advisorsCsv = arrayToCsv(allAdvisors, advisorFields);
 
     // Combine and download
-    const combinedCsv = 'Contracts\n' + contractsCsv + '\n\nClients\n' + clientsCsv + '\n\nAdvisors\n' + advisorsCsv;
-    downloadCsv(combinedCsv, 'all_crm_data.csv');
+    const combinedCsv = `Contracts\n${contractsCsv}\n\nClients\n${clientsCsv}\n\nAdvisors\n${advisorsCsv}`;
+    downloadCsv(combinedCsv, 'all_data.csv');
   };
 
   if (contractsLoading) {
@@ -282,7 +325,20 @@ export function ContractsPage() {
         <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
           <button
             type="button"
-            onClick={() => setIsFormOpen(true)}
+            onClick={() => {
+              if (hasUnsavedChanges) {
+                if (window.confirm('You have unsaved changes. Do you want to discard them and create a new contract?')) {
+                  setIsFormOpen(true);
+                  setEditingContract(undefined);
+                  setEditingAdvisorIds([]);
+                  setHasUnsavedChanges(false);
+                }
+              } else {
+                setIsFormOpen(true);
+                setEditingContract(undefined);
+                setEditingAdvisorIds([]);
+              }
+            }}
             className="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 w-40"
             hidden={localStorage.getItem('isAdmin') !== 'true'}
           >
@@ -424,6 +480,7 @@ export function ContractsPage() {
               selectedAdvisors={editingAdvisorIds}
               onSubmit={handleSubmit}
               onCancel={handleCancel}
+              onFormChange={handleFormChange}
             />
           </div>
         </div>
@@ -441,32 +498,41 @@ export function ContractsPage() {
       </div>
 
       {/* Export Buttons Container */}
-      <div className="mt-8 flex justify-between items-center">
-        {/* Export Contracts Button */}
+      <div className="mt-4 flex justify-between items-center">
+        {/* Export Contracts Button on the left */}
         <div>
           <button
+            type="button"
             onClick={() => {
               // Create a new array with both IDs and names
               const contractsWithNames = filteredContracts.map(contract => {
                 const client = clients.find(c => String(c.id) === String(contract.clientId));
                 const administrator = advisors.find(a => String(a.id) === String(contract.administratorId));
+                const assignedAdvisorNames = contractAdvisors
+                  .filter(ca => ca.contractId === contract.id)
+                  .map(ca => advisors.find(a => String(a.id) === String(ca.advisorId)))
+                  .filter(advisor => advisor !== undefined)
+                  .map(advisor => `${advisor!.name} ${advisor!.surname}`)
+                  .join(', ');
                 return {
                   ...contract,
                   clientId: String(contract.clientId),
                   clientName: client ? `${client.name} ${client.surname}` : 'Unknown',
                   administratorId: String(contract.administratorId),
-                  administratorName: administrator ? `${administrator.name} ${administrator.surname}` : 'Unknown'
+                  administratorName: administrator ? `${administrator.name} ${administrator.surname}` : 'Unknown',
+                  assignedAdvisors: assignedAdvisorNames
                 };
               });
 
-              type ContractWithNames = typeof contractsWithNames[0];
-              const fields: { key: keyof ContractWithNames, label: string }[] = [
+              type ContractExport = typeof contractsWithNames[0];
+              const fields: { key: keyof ContractExport, label: string }[] = [
                 { key: 'registrationNumber', label: 'Registration Number' },
                 { key: 'institution', label: 'Institution' },
                 { key: 'clientId', label: 'Client ID' },
                 { key: 'clientName', label: 'Client Name' },
                 { key: 'administratorId', label: 'Administrator ID' },
                 { key: 'administratorName', label: 'Administrator Name' },
+                { key: 'assignedAdvisors', label: 'Assigned Advisors' },
                 { key: 'validityDate', label: 'Validity Date' },
                 { key: 'conclusionDate', label: 'Conclusion Date' },
                 { key: 'endingDate', label: 'Ending Date' },
@@ -481,11 +547,13 @@ export function ContractsPage() {
           </button>
         </div>
 
-        {/* Export All Data Button */}
+        {/* Export All Data Button on the right */}
         <div>
           <button
+            type="button"
             onClick={handleExportAllCsv}
             className="inline-flex items-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500"
+            hidden={localStorage.getItem('isAdmin') !== 'true'}
           >
             Export All Data CSV
           </button>

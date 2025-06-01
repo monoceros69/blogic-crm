@@ -118,7 +118,7 @@ const ClientList: React.FC<ClientListProps> = ({ clients, onEdit, onDelete }) =>
                 </th>
                 <th 
                   scope="col" 
-                  className="w-72 px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  className="w-72 px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase select-none tracking-wider cursor-pointer hover:bg-gray-100"
                   onClick={() => handleSort('email')}
                 >
                   <div className="flex items-center gap-1">
@@ -128,7 +128,7 @@ const ClientList: React.FC<ClientListProps> = ({ clients, onEdit, onDelete }) =>
                 </th>
                 <th 
                   scope="col" 
-                  className="w-48 px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  className="w-48 px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase select-none tracking-wider cursor-pointer hover:bg-gray-100"
                   onClick={() => handleSort('phone')}
                 >
                   <div className="flex items-center gap-1">
@@ -138,7 +138,7 @@ const ClientList: React.FC<ClientListProps> = ({ clients, onEdit, onDelete }) =>
                 </th>
                 <th 
                   scope="col" 
-                  className="w-32 px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  className="w-32 px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase select-none tracking-wider cursor-pointer hover:bg-gray-100"
                   onClick={() => handleSort('age')}
                 >
                   <div className="flex items-center gap-1">
@@ -148,7 +148,7 @@ const ClientList: React.FC<ClientListProps> = ({ clients, onEdit, onDelete }) =>
                 </th>
                 <th 
                   scope="col" 
-                  className="w-48 px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  className="w-48 px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase select-none tracking-wider cursor-pointer hover:bg-gray-100"
                   onClick={() => handleSort('ssn')}
                 >
                   <div className="flex items-center gap-1">

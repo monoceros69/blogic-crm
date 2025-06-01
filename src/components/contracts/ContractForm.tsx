@@ -1,6 +1,6 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { type Contract, type Client, type Advisor } from '../../types';
 import { contractSchema, type ContractFormData } from '../../schemas';
 
@@ -11,16 +11,19 @@ interface ContractFormProps {
   selectedAdvisors?: string[];
   onSubmit: (data: ContractFormData, advisorIds: string[]) => void;
   onCancel: () => void;
+  onFormChange: (hasChanges: boolean) => void;
 }
 
-export function ContractForm({ 
-  contract, 
-  clients, 
-  advisors, 
+export function ContractForm({
+  contract,
+  clients,
+  advisors,
   selectedAdvisors = [],
-  onSubmit, 
-  onCancel 
+  onSubmit,
+  onCancel,
+  onFormChange
 }: ContractFormProps) {
+  const formRef = useRef<HTMLFormElement>(null);
   const [advisorIds, setAdvisorIds] = useState<string[]>(
     selectedAdvisors.length > 0 ? selectedAdvisors : []
   );
@@ -28,9 +31,10 @@ export function ContractForm({
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isDirty },
     watch,
-  } = useForm<ContractFormData>({
+    reset,
+  } = useForm({
     resolver: zodResolver(contractSchema),
     defaultValues: contract ? {
       registrationNumber: contract.registrationNumber,
@@ -42,7 +46,7 @@ export function ContractForm({
       endingDate: contract.endingDate,
     } : {
       registrationNumber: '',
-      institution: 'ČSOB',
+      institution: 'ČSOB' as 'ČSOB' | 'AEGON' | 'Axa' | 'Other',
       clientId: '',
       administratorId: '',
       conclusionDate: '',
@@ -58,14 +62,25 @@ export function ContractForm({
     if (administratorId && !advisorIds.includes(administratorId)) {
       setAdvisorIds([...advisorIds, administratorId]);
     }
-  }, [administratorId]);
+  }, [administratorId, advisorIds]); // Added advisorIds to dependency array
 
+  // Initialize advisorIds state when contract prop changes (for editing)
+  useEffect(() => {
+    if (contract && selectedAdvisors.length > 0) {
+      setAdvisorIds(selectedAdvisors);
+    } else if (!contract) {
+      // Clear advisors when adding a new contract
+      setAdvisorIds([]);
+    }
+  }, [contract, selectedAdvisors]);
+
+  // Handle advisor checkbox toggle
   const handleAdvisorToggle = (advisorId: string) => {
     if (advisorId === administratorId) {
       alert('Cannot remove the administrator from advisors');
       return;
     }
-    
+
     setAdvisorIds(prev =>
       prev.includes(advisorId)
         ? prev.filter(id => id !== advisorId)
@@ -81,15 +96,67 @@ export function ContractForm({
     onSubmit(data, advisorIds);
   };
 
+  // Scroll form into view when the contract prop changes or form is initially rendered
+  useEffect(() => {
+    if (formRef.current) {
+      formRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [contract]);
+
+  // Watch form fields for changes and notify parent component
+  useEffect(() => {
+    const subscription = watch(() => {
+      onFormChange(isDirty);
+    });
+    return () => subscription.unsubscribe();
+  }, [watch, isDirty, onFormChange]);
+
+  // Reset form when the contract prop changes (for editing)
+  useEffect(() => {
+    if (contract) {
+      // Ensure default values are set based on contract for reset
+      reset({
+        registrationNumber: contract.registrationNumber,
+        institution: contract.institution as 'ČSOB' | 'AEGON' | 'Axa' | 'Other',
+        clientId: String(contract.clientId),
+        administratorId: String(contract.administratorId),
+        conclusionDate: contract.conclusionDate,
+        validityDate: contract.validityDate,
+        endingDate: contract.endingDate,
+      });
+    } else {
+      // Reset to empty when creating a new contract
+      reset({
+        registrationNumber: '',
+        institution: 'ČSOB' as 'ČSOB' | 'AEGON' | 'Axa' | 'Other',
+        clientId: '',
+        administratorId: '',
+        conclusionDate: '',
+        validityDate: '',
+        endingDate: '',
+      });
+    }
+  }, [contract, reset]);
+
+  // Watch advisorIds state for changes and notify parent component
+  useEffect(() => {
+    const initialAdvisorIds = contract ? selectedAdvisors : [];
+    const hasAdvisorChanges = JSON.stringify(advisorIds.sort()) !== JSON.stringify(initialAdvisorIds.sort());
+    
+    // Combine form field dirtiness with advisor changes
+    onFormChange(isDirty || hasAdvisorChanges);
+  }, [advisorIds, isDirty, onFormChange, contract, selectedAdvisors]);
+
   return (
-    <form onSubmit={handleSubmit(onFormSubmit)} className="space-y-6">
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+    <form ref={formRef} onSubmit={handleSubmit(onFormSubmit)} className="space-y-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor="registrationNumber" className="block text-sm font-medium text-gray-700">
             Registration Number
           </label>
           <input
             type="text"
+            id="registrationNumber"
             {...register('registrationNumber')}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2 px-3"
           />
@@ -103,6 +170,7 @@ export function ContractForm({
             Institution
           </label>
           <select
+            id="institution"
             {...register('institution')}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2 px-3"
           >
@@ -121,6 +189,7 @@ export function ContractForm({
             Client
           </label>
           <select
+            id="clientId"
             {...register('clientId')}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2 px-3"
           >
@@ -141,6 +210,7 @@ export function ContractForm({
             Administrator
           </label>
           <select
+            id="administratorId"
             {...register('administratorId')}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2 px-3"
           >
@@ -164,6 +234,7 @@ export function ContractForm({
           </label>
           <input
             type="date"
+            id="conclusionDate"
             {...register('conclusionDate')}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2 px-3"
           />
@@ -178,6 +249,7 @@ export function ContractForm({
           </label>
           <input
             type="date"
+            id="validityDate"
             {...register('validityDate')}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2 px-3"
           />
@@ -192,6 +264,7 @@ export function ContractForm({
           </label>
           <input
             type="date"
+            id="endingDate"
             {...register('endingDate')}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2 px-3"
           />
@@ -214,6 +287,7 @@ export function ContractForm({
               >
                 <input
                   type="checkbox"
+                  id={`advisor-${advisor.id}`}
                   checked={advisorIds.includes(String(advisor.id))}
                   onChange={() => handleAdvisorToggle(String(advisor.id))}
                   disabled={String(advisor.id) === administratorId}

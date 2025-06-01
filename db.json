@@ -44,7 +44,7 @@
       "registrationNumber": "69-420",
       "institution": "Axa",
       "clientId": "0a75",
-      "administratorId": "1",
+      "administratorId": "3",
       "conclusionDate": "2025-05-14",
       "validityDate": "2025-06-19",
       "endingDate": "2025-06-27",
@@ -101,14 +101,14 @@
   ],
   "advisors": [
     {
-      "id": "1",
       "name": "Michael",
-      "surname": "Brown",
+      "surname": "Green",
       "email": "michael.brown@company.com",
       "phone": "+421900777888",
       "ssn": "456789/0123",
       "age": 45,
-      "isAdmin": true
+      "isAdmin": true,
+      "id": "1"
     },
     {
       "id": "2",
@@ -165,11 +165,6 @@
     {
       "id": "69d8",
       "contractId": "e443",
-      "advisorId": "1"
-    },
-    {
-      "id": "5903",
-      "contractId": "ee09",
       "advisorId": "1"
     },
     {

@@ -10,6 +10,7 @@ export function AdvisorsPage() {
   const queryClient = useQueryClient();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingAdvisor, setEditingAdvisor] = useState<Advisor | undefined>();
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   const { data: advisors = [], isLoading, error } = useQuery({
     queryKey: ['advisors'],
@@ -24,6 +25,7 @@ export function AdvisorsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['advisors'] });
       setIsFormOpen(false);
+      setHasUnsavedChanges(false);
     },
   });
 
@@ -34,6 +36,7 @@ export function AdvisorsPage() {
       queryClient.invalidateQueries({ queryKey: ['advisors'] });
       setIsFormOpen(false);
       setEditingAdvisor(undefined);
+      setHasUnsavedChanges(false);
     },
   });
 
@@ -53,8 +56,16 @@ export function AdvisorsPage() {
   };
 
   const handleEdit = (advisor: Advisor) => {
-    setEditingAdvisor(advisor);
-    setIsFormOpen(true);
+    if (hasUnsavedChanges) {
+      if (window.confirm('You have unsaved changes. Do you want to discard them and edit a different advisor?')) {
+        setEditingAdvisor(advisor);
+        setHasUnsavedChanges(false);
+        setIsFormOpen(true);
+      }
+    } else {
+      setEditingAdvisor(advisor);
+      setIsFormOpen(true);
+    }
   };
 
   const handleDelete = (id: string) => {
@@ -64,8 +75,20 @@ export function AdvisorsPage() {
   };
 
   const handleCancel = () => {
-    setIsFormOpen(false);
-    setEditingAdvisor(undefined);
+    if (hasUnsavedChanges) {
+      if (window.confirm('You have unsaved changes. Do you want to discard them?')) {
+        setIsFormOpen(false);
+        setEditingAdvisor(undefined);
+        setHasUnsavedChanges(false);
+      }
+    } else {
+      setIsFormOpen(false);
+      setEditingAdvisor(undefined);
+    }
+  };
+
+  const handleFormChange = (hasChanges: boolean) => {
+    setHasUnsavedChanges(hasChanges);
   };
 
   if (isLoading) {
@@ -90,13 +113,24 @@ export function AdvisorsPage() {
         <div className="sm:flex-auto">
           <h1 className="text-xl font-semibold text-gray-900">Advisors</h1>
           <p className="mt-2 text-sm text-gray-700">
-            A list of all advisors and administrators in the system.
+            A list of all advisors in the system.
           </p>
         </div>
         <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
           <button
             type="button"
-            onClick={() => setIsFormOpen(true)}
+            onClick={() => {
+              if (hasUnsavedChanges) {
+                if (window.confirm('You have unsaved changes. Do you want to discard them and create a new advisor?')) {
+                  setIsFormOpen(true);
+                  setEditingAdvisor(undefined);
+                  setHasUnsavedChanges(false);
+                }
+              } else {
+                setIsFormOpen(true);
+                setEditingAdvisor(undefined);
+              }
+            }}
             className="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 w-40"
             hidden={localStorage.getItem('isAdmin') !== 'true'}
           >
@@ -115,6 +149,7 @@ export function AdvisorsPage() {
               advisor={editingAdvisor}
               onSubmit={handleSubmit}
               onCancel={handleCancel}
+              onFormChange={handleFormChange}
             />
           </div>
         </div>

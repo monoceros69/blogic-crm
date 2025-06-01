@@ -108,7 +108,7 @@ const AdvisorList: React.FC<AdvisorListProps> = ({ advisors, onEdit, onDelete })
               <tr>
                 <th 
                   scope="col" 
-                  className="w-56 px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  className="w-56 px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase select-none tracking-wider cursor-pointer hover:bg-gray-100"
                   onClick={() => handleSort('name')}
                 >
                   <div className="flex items-center gap-1">
@@ -118,7 +118,7 @@ const AdvisorList: React.FC<AdvisorListProps> = ({ advisors, onEdit, onDelete })
                 </th>
                 <th 
                   scope="col" 
-                  className="w-72 px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  className="w-72 px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase select-none tracking-wider cursor-pointer hover:bg-gray-100"
                   onClick={() => handleSort('email')}
                 >
                   <div className="flex items-center gap-1">
@@ -128,7 +128,7 @@ const AdvisorList: React.FC<AdvisorListProps> = ({ advisors, onEdit, onDelete })
                 </th>
                 <th 
                   scope="col" 
-                  className="w-48 px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  className="w-48 px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase select-none tracking-wider cursor-pointer hover:bg-gray-100"
                   onClick={() => handleSort('phone')}
                 >
                   <div className="flex items-center gap-1">
@@ -138,7 +138,7 @@ const AdvisorList: React.FC<AdvisorListProps> = ({ advisors, onEdit, onDelete })
                 </th>
                 <th 
                   scope="col" 
-                  className="w-32 px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  className="w-32 px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase select-none tracking-wider cursor-pointer hover:bg-gray-100"
                   onClick={() => handleSort('isAdmin')}
                 >
                   <div className="flex items-center gap-1">
@@ -148,7 +148,7 @@ const AdvisorList: React.FC<AdvisorListProps> = ({ advisors, onEdit, onDelete })
                 </th>
                 <th 
                   scope="col" 
-                  className="w-48 px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  className="w-48 px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase select-none tracking-wider cursor-pointer hover:bg-gray-100"
                   onClick={() => handleSort('ssn')}
                 >
                   <div className="flex items-center gap-1">
@@ -239,7 +239,7 @@ const AdvisorList: React.FC<AdvisorListProps> = ({ advisors, onEdit, onDelete })
                   <div className="text-gray-500">SSN</div>
                   <div className="break-words">{advisor.ssn}</div>
                 </div>
-                <div className="flex -mx-4 -mb-4 pt-4 border-t border-gray-200">
+                <div className="flex -mx-4 -mb-4 border-t border-gray-200">
                   {localStorage.getItem('isAdmin') === 'true' && (
                     <>
                       <button

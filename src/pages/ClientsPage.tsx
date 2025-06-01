@@ -10,6 +10,7 @@ export function ClientsPage() {
   const queryClient = useQueryClient();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingClient, setEditingClient] = useState<Client | undefined>();
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   const { data: clients = [], isLoading, error } = useQuery({
     queryKey: ['clients'],
@@ -24,6 +25,7 @@ export function ClientsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['clients'] });
       setIsFormOpen(false);
+      setHasUnsavedChanges(false);
     },
   });
 
@@ -34,6 +36,7 @@ export function ClientsPage() {
       queryClient.invalidateQueries({ queryKey: ['clients'] });
       setIsFormOpen(false);
       setEditingClient(undefined);
+      setHasUnsavedChanges(false);
     },
   });
 
@@ -53,8 +56,16 @@ export function ClientsPage() {
   };
 
   const handleEdit = (client: Client) => {
-    setEditingClient(client);
-    setIsFormOpen(true);
+    if (hasUnsavedChanges) {
+      if (window.confirm('You have unsaved changes. Do you want to discard them and edit a different client?')) {
+        setEditingClient(client);
+        setHasUnsavedChanges(false);
+        setIsFormOpen(true);
+      }
+    } else {
+      setEditingClient(client);
+      setIsFormOpen(true);
+    }
   };
 
   const handleDelete = (id: string) => {
@@ -64,8 +75,20 @@ export function ClientsPage() {
   };
 
   const handleCancel = () => {
-    setIsFormOpen(false);
-    setEditingClient(undefined);
+    if (hasUnsavedChanges) {
+      if (window.confirm('You have unsaved changes. Do you want to discard them?')) {
+        setIsFormOpen(false);
+        setEditingClient(undefined);
+        setHasUnsavedChanges(false);
+      }
+    } else {
+      setIsFormOpen(false);
+      setEditingClient(undefined);
+    }
+  };
+
+  const handleFormChange = (hasChanges: boolean) => {
+    setHasUnsavedChanges(hasChanges);
   };
 
   if (isLoading) {
@@ -96,7 +119,18 @@ export function ClientsPage() {
         <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
           <button
             type="button"
-            onClick={() => setIsFormOpen(true)}
+            onClick={() => {
+              if (hasUnsavedChanges) {
+                if (window.confirm('You have unsaved changes. Do you want to discard them and create a new client?')) {
+                  setIsFormOpen(true);
+                  setEditingClient(undefined);
+                  setHasUnsavedChanges(false);
+                }
+              } else {
+                setIsFormOpen(true);
+                setEditingClient(undefined);
+              }
+            }}
             className="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 w-40"
             hidden={localStorage.getItem('isAdmin') !== 'true'}
           >
@@ -115,6 +149,7 @@ export function ClientsPage() {
               client={editingClient}
               onSubmit={handleSubmit}
               onCancel={handleCancel}
+              onFormChange={handleFormChange}
             />
           </div>
         </div>

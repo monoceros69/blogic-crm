@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { type Advisor } from '../../types';
@@ -7,35 +8,61 @@ interface AdvisorFormProps {
   advisor?: Advisor;
   onSubmit: (data: AdvisorFormData) => void;
   onCancel: () => void;
+  onFormChange: (hasChanges: boolean) => void;
 }
 
-export function AdvisorForm({ advisor, onSubmit, onCancel }: AdvisorFormProps) {
+export function AdvisorForm({ advisor, onSubmit, onCancel, onFormChange }: AdvisorFormProps) {
+  const formRef = useRef<HTMLFormElement>(null);
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isDirty },
+    watch,
+    reset,
   } = useForm({
     resolver: zodResolver(advisorSchema),
-    defaultValues: advisor || {
-      name: '',
-      surname: '',
-      email: '',
-      phone: '',
-      ssn: '',
-      age: 18,
-      isAdmin: false,
-    },
+    defaultValues: advisor
+      ? {
+          name: advisor.name,
+          surname: advisor.surname,
+          email: advisor.email,
+          phone: advisor.phone,
+          ssn: advisor.ssn,
+          age: advisor.age,
+          isAdmin: advisor.isAdmin,
+        }
+      : undefined,
   });
 
+  useEffect(() => {
+    if (formRef.current) {
+      formRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [advisor]);
+
+  useEffect(() => {
+    const subscription = watch(() => {
+      onFormChange(isDirty);
+    });
+    return () => subscription.unsubscribe();
+  }, [watch, isDirty, onFormChange]);
+
+  useEffect(() => {
+    if (advisor) {
+      reset(advisor);
+    }
+  }, [advisor, reset]);
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+    <form ref={formRef} onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor="name" className="block text-sm font-medium text-gray-700">
             Name
           </label>
           <input
             type="text"
+            id="name"
             {...register('name')}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2 px-3"
           />
@@ -50,6 +77,7 @@ export function AdvisorForm({ advisor, onSubmit, onCancel }: AdvisorFormProps) {
           </label>
           <input
             type="text"
+            id="surname"
             {...register('surname')}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2 px-3"
           />
@@ -64,6 +92,7 @@ export function AdvisorForm({ advisor, onSubmit, onCancel }: AdvisorFormProps) {
           </label>
           <input
             type="email"
+            id="email"
             {...register('email')}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2 px-3"
           />
@@ -78,6 +107,7 @@ export function AdvisorForm({ advisor, onSubmit, onCancel }: AdvisorFormProps) {
           </label>
           <input
             type="tel"
+            id="phone"
             {...register('phone')}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2 px-3"
           />
@@ -88,10 +118,11 @@ export function AdvisorForm({ advisor, onSubmit, onCancel }: AdvisorFormProps) {
 
         <div>
           <label htmlFor="ssn" className="block text-sm font-medium text-gray-700">
-            SSN (format: 123456/7890)
+            SSN
           </label>
           <input
             type="text"
+            id="ssn"
             {...register('ssn')}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2 px-3"
           />
@@ -106,7 +137,8 @@ export function AdvisorForm({ advisor, onSubmit, onCancel }: AdvisorFormProps) {
           </label>
           <input
             type="number"
-            {...register('age')}
+            id="age"
+            {...register('age', { valueAsNumber: true })}
             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-2 px-3"
           />
           {errors.age && (
