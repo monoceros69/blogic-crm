@@ -3,8 +3,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import ContractList from '../components/contracts/ContractList';
 import { ContractForm } from '../components/contracts/ContractForm';
 import { contractsApi, clientsApi, advisorsApi, contractAdvisorsApi } from '../services/api';
-import { type Contract } from '../types';
+import { type Contract, type Client, type Advisor } from '../types';
 import { type ContractFormData } from '../schemas';
+import { arrayToCsv, downloadCsv } from '../utils/export';
 
 export function ContractsPage() {
   const queryClient = useQueryClient();
@@ -204,6 +205,63 @@ export function ContractsPage() {
     return institutionMatch && clientMatch && advisorMatch;
   });
 
+  const handleExportAllCsv = async () => {
+    // Use the data from react-query hooks
+    const allContracts: Contract[] = contracts;
+    const allClients: Client[] = clients;
+    const allAdvisors: Advisor[] = advisors;
+
+    // Prepare and Export Contracts
+    const contractFields = [
+      { key: 'registrationNumber', label: 'Registration Number' },
+      { key: 'institution', label: 'Institution' },
+      { key: 'clientId', label: 'Client ID' },
+      { key: 'clientName', label: 'Client Name' },
+      { key: 'administratorId', label: 'Administrator ID' },
+      { key: 'administratorName', label: 'Administrator Name' },
+      { key: 'validityDate', label: 'Validity Date' },
+      { key: 'conclusionDate', label: 'Conclusion Date' },
+      { key: 'endingDate', label: 'Ending Date' },
+    ] as { key: keyof (Contract & { clientName: string; administratorName: string }), label: string }[];
+
+    const contractsWithNames = allContracts.map(contract => {
+      const client = allClients.find(c => String(c.id) === String(contract.clientId));
+      const administrator = allAdvisors.find(a => String(a.id) === String(contract.administratorId));
+      return {
+        ...contract,
+        clientId: String(contract.clientId),
+        clientName: client ? `${client.name} ${client.surname}` : 'Unknown',
+        administratorId: String(contract.administratorId),
+        administratorName: administrator ? `${administrator.name} ${administrator.surname}` : 'Unknown'
+      };
+    });
+    const contractsCsv = arrayToCsv(contractsWithNames, contractFields);
+
+    // Prepare and Export Clients
+    const clientFields: { key: keyof Client, label: string }[] = [
+      { key: 'name', label: 'First Name' },
+      { key: 'surname', label: 'Surname' },
+      { key: 'email', label: 'Email' },
+      { key: 'phone', label: 'Phone' },
+      { key: 'age', label: 'Age' },
+    ];
+    const clientsCsv = arrayToCsv(allClients, clientFields);
+
+    // Prepare and Export Advisors
+    const advisorFields: { key: keyof Advisor, label: string }[] = [
+      { key: 'name', label: 'First Name' },
+      { key: 'surname', label: 'Surname' },
+      { key: 'email', label: 'Email' },
+      { key: 'phone', label: 'Phone' },
+      { key: 'isAdmin', label: 'Is Admin' },
+    ];
+    const advisorsCsv = arrayToCsv(allAdvisors, advisorFields);
+
+    // Combine and download
+    const combinedCsv = 'Contracts\n' + contractsCsv + '\n\nClients\n' + clientsCsv + '\n\nAdvisors\n' + advisorsCsv;
+    downloadCsv(combinedCsv, 'all_crm_data.csv');
+  };
+
   if (contractsLoading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -375,9 +433,62 @@ export function ContractsPage() {
           contracts={filteredContracts}
           clients={clients}
           advisors={advisors}
+          contractAdvisors={contractAdvisors}
           onEdit={handleEdit}
           onDelete={handleDelete}
         />
+      </div>
+
+      {/* Export Buttons Container */}
+      <div className="mt-8 flex justify-between items-center">
+        {/* Export Contracts Button */}
+        <div>
+          <button
+            onClick={() => {
+              // Create a new array with both IDs and names
+              const contractsWithNames = filteredContracts.map(contract => {
+                const client = clients.find(c => String(c.id) === String(contract.clientId));
+                const administrator = advisors.find(a => String(a.id) === String(contract.administratorId));
+                return {
+                  ...contract,
+                  clientId: String(contract.clientId),
+                  clientName: client ? `${client.name} ${client.surname}` : 'Unknown',
+                  administratorId: String(contract.administratorId),
+                  administratorName: administrator ? `${administrator.name} ${administrator.surname}` : 'Unknown'
+                };
+              });
+
+              type ContractWithNames = typeof contractsWithNames[0];
+              const fields: { key: keyof ContractWithNames, label: string }[] = [
+                { key: 'registrationNumber', label: 'Registration Number' },
+                { key: 'institution', label: 'Institution' },
+                { key: 'clientId', label: 'Client ID' },
+                { key: 'clientName', label: 'Client Name' },
+                { key: 'administratorId', label: 'Administrator ID' },
+                { key: 'administratorName', label: 'Administrator Name' },
+                { key: 'validityDate', label: 'Validity Date' },
+                { key: 'conclusionDate', label: 'Conclusion Date' },
+                { key: 'endingDate', label: 'Ending Date' },
+              ];
+
+              const csvString = arrayToCsv(contractsWithNames, fields);
+              downloadCsv(csvString, 'contracts.csv');
+            }}
+            className="inline-flex items-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500"
+          >
+            Export Contracts CSV
+          </button>
+        </div>
+
+        {/* Export All Data Button */}
+        <div>
+          <button
+            onClick={handleExportAllCsv}
+            className="inline-flex items-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500"
+          >
+            Export All Data CSV
+          </button>
+        </div>
       </div>
     </div>
   );

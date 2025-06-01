@@ -1,6 +1,6 @@
 # Contract Management POC
 
-![CI](https://github.com/monoceros69/blogic-crm/workflows/CI/badge.svg)
+![CI](https://github.com/monoceros69/blogic-crm/workflows/ci.yml/badge.svg?query=event:push+branch:main)
 # Contract Management POC
 
 A proof-of-concept React application for managing contracts, clients, and advisors. Built with React, TypeScript, React Hook Form, Zod, and json-server for mock API.

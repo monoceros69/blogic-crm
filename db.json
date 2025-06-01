@@ -49,6 +49,16 @@
       "validityDate": "2025-06-19",
       "endingDate": "2025-06-27",
       "id": "ee09"
+    },
+    {
+      "id": "b0d5",
+      "registrationNumber": "1215-541",
+      "institution": "AEGON",
+      "clientId": "2",
+      "administratorId": "1",
+      "conclusionDate": "2025-06-06",
+      "validityDate": "2025-06-19",
+      "endingDate": "2025-06-27"
     }
   ],
   "clients": [
@@ -176,6 +186,23 @@
       "id": "e8f2",
       "contractId": "ee09",
       "advisorId": "3"
+    },
+    {
+      "id": "71cf",
+      "contractId": "b0d5",
+      "advisorId": "1"
+    }
+  ],
+  "users": [
+    {
+      "id": "1",
+      "username": "admin",
+      "password": "password123"
+    },
+    {
+      "id": "2",
+      "username": "user",
+      "password": "password456"
     }
   ]
 }

@@ -4,17 +4,18 @@ import { FaSort, FaSortUp, FaSortDown } from 'react-icons/fa';
 import { type Contract, type Client, type Advisor } from '../../types';
 
 type SortDirection = 'asc' | 'desc' | null;
-type SortField = 'registrationNumber' | 'institution' | 'clientName' | 'advisorName' | 'administratorName' | 'validityDate' | null;
+type SortField = 'registrationNumber' | 'institution' | 'clientName' | 'administratorName' | 'assignedAdvisors' | 'validityDate' | null;
 
 interface ContractListProps {
   contracts: Contract[];
   clients: Client[];
   advisors: Advisor[];
+  contractAdvisors: { id?: string; contractId: string | number; advisorId: string | number }[];
   onEdit: (contract: Contract) => void;
   onDelete: (id: string) => void;
 }
 
-const ContractList: React.FC<ContractListProps> = ({ contracts, clients, advisors, onEdit, onDelete }) => {
+const ContractList: React.FC<ContractListProps> = ({ contracts, clients, advisors, contractAdvisors, onEdit, onDelete }) => {
   const [sortField, setSortField] = useState<SortField>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>(null);
   const [sortedContracts, setSortedContracts] = useState<Contract[]>(contracts);
@@ -42,17 +43,29 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, clients, advisor
           aValue = clients.find(c => c.id === a.clientId)?.name || '';
           bValue = clients.find(c => c.id === b.clientId)?.name || '';
           break;
-        case 'advisorName':
-          const aAdvisor = advisors.find(adv => adv.id === a.administratorId);
-          const bAdvisor = advisors.find(adv => adv.id === b.administratorId);
-          aValue = aAdvisor?.name || '';
-          bValue = bAdvisor?.name || '';
-          break;
         case 'administratorName':
           const aAdmin = advisors.find(adv => String(adv.id) === String(a.administratorId));
           const bAdmin = advisors.find(adv => String(adv.id) === String(b.administratorId));
           aValue = aAdmin?.name || '';
           bValue = bAdmin?.name || '';
+          break;
+        case 'assignedAdvisors':
+          const aAdvisors = contractAdvisors
+            .filter(ca => String(ca.contractId) === a.id)
+            .map(ca => {
+              const advisor = advisors.find(adv => String(adv.id) === String(ca.advisorId));
+              return advisor ? `${advisor.name} ${advisor.surname}` : '';
+            })
+            .join(', ');
+          const bAdvisors = contractAdvisors
+            .filter(ca => String(ca.contractId) === b.id)
+            .map(ca => {
+              const advisor = advisors.find(adv => String(adv.id) === String(ca.advisorId));
+              return advisor ? `${advisor.name} ${advisor.surname}` : '';
+            })
+            .join(', ');
+          aValue = aAdvisors;
+          bValue = bAdvisors;
           break;
         case 'validityDate':
           aValue = new Date(a.validityDate).getTime();
@@ -70,7 +83,7 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, clients, advisor
     });
 
     setSortedContracts(sorted);
-  }, [contracts, clients, advisors, sortField, sortDirection]);
+  }, [contracts, clients, advisors, contractAdvisors, sortField, sortDirection]);
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -103,12 +116,25 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, clients, advisor
     return advisor ? `${advisor.name} ${advisor.surname}` : 'Unknown';
   };
 
+  const getAssignedAdvisors = (contractId: string) => {
+    return contractAdvisors
+      .filter(ca => String(ca.contractId) === contractId)
+      .map(ca => {
+        const advisor = advisors.find(adv => String(adv.id) === String(ca.advisorId));
+        return advisor ? {
+          id: String(advisor.id),
+          name: `${advisor.name} ${advisor.surname}`
+        } : null;
+      })
+      .filter(advisor => advisor !== null) as { id: string; name: string }[];
+  };
+
   return (
     <div className="w-full">
       {/* Desktop Table View */}
       <div className="hidden md:block">
-        <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 rounded-lg">
-          <table className="w-full divide-y divide-gray-300">
+        <div className="overflow-x-auto shadow ring-1 ring-black ring-opacity-5 rounded-lg">
+          <table className="min-w-full divide-y divide-gray-300">
             <thead className="bg-gray-50">
               <tr>
                 <th 
@@ -139,6 +165,16 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, clients, advisor
                   <div className="flex items-center gap-1">
                     Client
                     {getSortIcon('clientName')}
+                  </div>
+                </th>
+                <th 
+                  scope="col" 
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                  onClick={() => handleSort('assignedAdvisors')}
+                >
+                  <div className="flex items-center gap-1">
+                    Assigned Advisors
+                    {getSortIcon('assignedAdvisors')}
                   </div>
                 </th>
                 <th 
@@ -187,6 +223,21 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, clients, advisor
                     >
                       {getClientName(String(contract.clientId))}
                     </Link>
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-500">
+                    {
+                      getAssignedAdvisors(String(contract.id)).map((advisor, index) => (
+                        <React.Fragment key={advisor.id}>
+                          <Link
+                            to={`/advisors/${advisor.id}`}
+                            className="text-indigo-600 hover:text-indigo-900"
+                          >
+                            {advisor.name}
+                          </Link>
+                          {index < getAssignedAdvisors(String(contract.id)).length - 1 && ', '}
+                        </React.Fragment>
+                      ))
+                    }
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-500">
                     <Link
@@ -258,6 +309,23 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, clients, advisor
                     >
                       {getAdvisorName(String(contract.administratorId))}
                     </Link>
+                  </div>
+                  
+                  <div className="text-gray-500">Assigned Advisors</div>
+                  <div className="break-words">
+                    {
+                      getAssignedAdvisors(String(contract.id)).map((advisor, index) => (
+                        <React.Fragment key={advisor.id}>
+                          <Link
+                            to={`/advisors/${advisor.id}`}
+                            className="text-indigo-600 hover:text-indigo-900"
+                          >
+                            {advisor.name}
+                          </Link>
+                          {index < getAssignedAdvisors(String(contract.id)).length - 1 && ', '}
+                        </React.Fragment>
+                      ))
+                    }
                   </div>
                   
                   <div className="text-gray-500">Validity Date</div>

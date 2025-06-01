@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { FaSort, FaSortUp, FaSortDown } from 'react-icons/fa';
 import { type Advisor } from '../../types';
+import { arrayToCsv, downloadCsv } from '../../utils/export';
 
 type SortDirection = 'asc' | 'desc' | null;
 type SortField = 'name' | 'email' | 'phone' | 'isAdmin' | null;
@@ -77,6 +78,19 @@ const AdvisorList: React.FC<AdvisorListProps> = ({ advisors, onEdit, onDelete })
   const getSortIcon = (field: SortField) => {
     if (sortField !== field) return <div className="text-gray-400"><FaSort /></div>;
     return sortDirection === 'asc' ? <div className="text-blue-500"><FaSortUp /></div> : <div className="text-blue-500"><FaSortDown /></div>;
+  };
+
+  const handleExportCsv = () => {
+    const fields: { key: keyof Advisor, label: string }[] = [
+      { key: 'name', label: 'First Name' },
+      { key: 'surname', label: 'Surname' },
+      { key: 'email', label: 'Email' },
+      { key: 'phone', label: 'Phone' },
+      { key: 'isAdmin', label: 'Is Admin' },
+    ];
+
+    const csvString = arrayToCsv(sortedAdvisors, fields);
+    downloadCsv(csvString, 'advisors.csv');
   };
 
   return (
@@ -217,6 +231,16 @@ const AdvisorList: React.FC<AdvisorListProps> = ({ advisors, onEdit, onDelete })
             </div>
           ))}
         </div>
+      </div>
+
+      {/* Export Button */}
+      <div className="mt-4">
+        <button
+          onClick={handleExportCsv}
+          className="inline-flex items-center justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-indigo-500"
+        >
+          Export Advisors CSV
+        </button>
       </div>
     </div>
   );
