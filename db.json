@@ -39,26 +39,6 @@
       "conclusionDate": "2025-05-22",
       "validityDate": "2025-05-29",
       "endingDate": "2025-05-31"
-    },
-    {
-      "registrationNumber": "69-420",
-      "institution": "Axa",
-      "clientId": "0a75",
-      "administratorId": "3",
-      "conclusionDate": "2025-05-14",
-      "validityDate": "2025-06-19",
-      "endingDate": "2025-06-27",
-      "id": "ee09"
-    },
-    {
-      "id": "b0d5",
-      "registrationNumber": "1215-541",
-      "institution": "AEGON",
-      "clientId": "2",
-      "administratorId": "1",
-      "conclusionDate": "2025-06-06",
-      "validityDate": "2025-06-19",
-      "endingDate": "2025-06-27"
     }
   ],
   "clients": [
@@ -88,15 +68,6 @@
       "phone": "+421900111222",
       "ssn": "345678/9012",
       "age": 28
-    },
-    {
-      "id": "0a75",
-      "name": "Robert",
-      "surname": "Lox",
-      "email": "roblox@lmao.com",
-      "phone": "+421548798985",
-      "ssn": "123456/7889",
-      "age": 22
     }
   ],
   "advisors": [
@@ -165,16 +136,6 @@
     {
       "id": "69d8",
       "contractId": "e443",
-      "advisorId": "1"
-    },
-    {
-      "id": "e8f2",
-      "contractId": "ee09",
-      "advisorId": "3"
-    },
-    {
-      "id": "71cf",
-      "contractId": "b0d5",
       "advisorId": "1"
     },
     {

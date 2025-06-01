@@ -30,10 +30,10 @@ To access the application, you can use the following placeholder accounts:
 
 - **Enhanced Phone Number Validation:** Checks for numeric format and allows optional leading '+'.
 - **Duplicate Contract Check:** Prevents creation or updating with existing registration numbers.
-- **Improved Table Functionality:** Added sorting and filtering on Contracts, Clients, and Advisors tables.
-- **Refined Mobile Layout:** Adjusted button layout and ensured text wrapping in mobile card views.
-- **Comprehensive CSV Export:** Export individual data (Contracts, Clients, Advisors) or a unified CSV file with data from all entities.
-- **Excel-Friendly CSV Export:** Formats phone numbers to prevent scientific notation in Excel.
+- **Improved Contracts Table Functionality:** Added filtering for the Contracts table, allowing more in-depth control over displayed information.
+- **Sort Functionality for Tables:** Added sorting for all main categories.
+- **Refined Mobile Layout:** A mobile-specific layout, allowing for the app to be displayed even on smaller devices, without sacrificing function.
+- **Comprehensive CSV Export:** Export individual data (Contracts, Clients, Advisors) or a unified CSV file with data from all entities - Excel ready.
 
 ## How to Use
 
