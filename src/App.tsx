@@ -1,12 +1,20 @@
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink, Navigate } from 'react-router-dom';
-import { ContractsPage } from './pages/ContractsPage';
-import { ClientsPage } from './pages/ClientsPage';
-import { AdvisorsPage } from './pages/AdvisorsPage';
-import { ContractDetailsPage } from './pages/ContractDetailsPage';
-import { ClientDetailsPage } from './pages/ClientDetailsPage';
-import { AdvisorDetailsPage } from './pages/AdvisorDetailsPage';
 import { LoginPage } from './pages/LoginPage';
-import { useEffect, useState } from 'react';
+
+// Lazy load all pages except Login
+const ContractsPage = lazy(() => import('./pages/ContractsPage'));
+const ClientsPage = lazy(() => import('./pages/ClientsPage'));
+const AdvisorsPage = lazy(() => import('./pages/AdvisorsPage'));
+const ContractDetailsPage = lazy(() => import('./pages/ContractDetailsPage'));
+const ClientDetailsPage = lazy(() => import('./pages/ClientDetailsPage'));
+const AdvisorDetailsPage = lazy(() => import('./pages/AdvisorDetailsPage'));
+
+const PageLoader = () => (
+  <div className="flex justify-center items-center h-64">
+    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+  </div>
+);
 
 function isAuthenticated() {
   return localStorage.getItem('isLoggedIn') === 'true';
@@ -99,15 +107,17 @@ function App() {
                   </header>
 
                   <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-                    <Routes>
-                      <Route path="/contracts" element={<ContractsPage />} />
-                      <Route path="/contracts/:id" element={<ContractDetailsPage />} />
-                      <Route path="/clients" element={<ClientsPage />} />
-                      <Route path="/clients/:id" element={<ClientDetailsPage />} />
-                      <Route path="/advisors" element={<AdvisorsPage />} />
-                      <Route path="/advisors/:id" element={<AdvisorDetailsPage />} />
-                      <Route path="*" element={<Navigate to="/contracts" />} />
-                    </Routes>
+                    <Suspense fallback={<PageLoader />}>
+                      <Routes>
+                        <Route path="/contracts" element={<ContractsPage />} />
+                        <Route path="/contracts/:id" element={<ContractDetailsPage />} />
+                        <Route path="/clients" element={<ClientsPage />} />
+                        <Route path="/clients/:id" element={<ClientDetailsPage />} />
+                        <Route path="/advisors" element={<AdvisorsPage />} />
+                        <Route path="/advisors/:id" element={<AdvisorDetailsPage />} />
+                        <Route path="*" element={<Navigate to="/contracts" />} />
+                      </Routes>
+                    </Suspense>
                   </main>
                 </>
               ) : (

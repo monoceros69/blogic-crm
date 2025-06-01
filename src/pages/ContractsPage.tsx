@@ -7,7 +7,7 @@ import { type Contract, type Client, type Advisor } from '../types';
 import { type ContractFormData } from '../schemas';
 import { arrayToCsv, downloadCsv } from '../utils/export';
 
-export function ContractsPage() {
+function ContractsPage() {
   const queryClient = useQueryClient();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingContract, setEditingContract] = useState<Contract | undefined>();
@@ -562,3 +562,4 @@ export function ContractsPage() {
     </div>
   );
 }
+export default ContractsPage;

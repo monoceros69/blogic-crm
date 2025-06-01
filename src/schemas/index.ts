@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const clientSchema = z.object({
+export const personSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   surname: z.string().min(1, 'Surname is required'),
   email: z.string().email('Invalid email'),
@@ -9,7 +9,11 @@ export const clientSchema = z.object({
   age: z.coerce.number().min(18, 'Must be at least 18').max(120, 'Must be less than 120')
 });
 
-export const advisorSchema = clientSchema.extend({
+export const clientSchema = z.object({
+  // Client specific fields if any, otherwise it can just extend Person
+}).extend(personSchema.shape);
+
+export const advisorSchema = personSchema.extend({
   isAdmin: z.boolean().optional().default(false)
 });
 
@@ -37,6 +41,7 @@ export const contractSchema = z.object({
   }
 );
 
+export type PersonFormData = z.infer<typeof personSchema>;
 export type ClientFormData = z.infer<typeof clientSchema>;
 export type AdvisorFormData = z.infer<typeof advisorSchema>;
 export type ContractFormData = z.infer<typeof contractSchema>;

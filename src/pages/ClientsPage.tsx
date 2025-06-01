@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import ClientList from '../components/clients/ClientList';
-import { ClientForm } from '../components/clients/ClientForm';
+import { PersonForm } from '../components/PersonForm';
 import { clientsApi } from '../services/api';
 import { type Client } from '../types';
-import { type ClientFormData } from '../schemas';
+import { type PersonFormData } from '../schemas';
 
-export function ClientsPage() {
+function ClientsPage() {
   const queryClient = useQueryClient();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingClient, setEditingClient] = useState<Client | undefined>();
@@ -21,7 +21,7 @@ export function ClientsPage() {
   });
 
   const createMutation = useMutation({
-    mutationFn: (data: ClientFormData) => clientsApi.create(data),
+    mutationFn: (data: PersonFormData) => clientsApi.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['clients'] });
       setIsFormOpen(false);
@@ -30,7 +30,7 @@ export function ClientsPage() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: ClientFormData }) =>
+    mutationFn: ({ id, data }: { id: string; data: PersonFormData }) =>
       clientsApi.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['clients'] });
@@ -47,7 +47,7 @@ export function ClientsPage() {
     },
   });
 
-  const handleSubmit = (data: ClientFormData) => {
+  const handleSubmit = (data: PersonFormData) => {
     if (editingClient?.id) {
       updateMutation.mutate({ id: editingClient.id, data });
     } else {
@@ -119,18 +119,7 @@ export function ClientsPage() {
         <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
           <button
             type="button"
-            onClick={() => {
-              if (hasUnsavedChanges) {
-                if (window.confirm('You have unsaved changes. Do you want to discard them and create a new client?')) {
-                  setIsFormOpen(true);
-                  setEditingClient(undefined);
-                  setHasUnsavedChanges(false);
-                }
-              } else {
-                setIsFormOpen(true);
-                setEditingClient(undefined);
-              }
-            }}
+            onClick={() => setIsFormOpen(true)}
             className="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 w-40"
             hidden={localStorage.getItem('isAdmin') !== 'true'}
           >
@@ -145,8 +134,8 @@ export function ClientsPage() {
             <h3 className="text-lg font-medium leading-6 text-gray-900 mb-4">
               {editingClient ? 'Edit Client' : 'New Client'}
             </h3>
-            <ClientForm
-              client={editingClient}
+            <PersonForm
+              person={editingClient}
               onSubmit={handleSubmit}
               onCancel={handleCancel}
               onFormChange={handleFormChange}
@@ -165,3 +154,4 @@ export function ClientsPage() {
     </div>
   );
 }
+export default ClientsPage;

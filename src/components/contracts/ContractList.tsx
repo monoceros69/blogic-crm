@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo, memo } from 'react';
 import { Link } from 'react-router-dom';
 import { FaSort, FaSortUp, FaSortDown } from 'react-icons/fa';
 import { type Contract, type Client, type Advisor } from '../../types';
@@ -15,18 +15,45 @@ interface ContractListProps {
   onDelete: (id: string) => void;
 }
 
-const ContractList: React.FC<ContractListProps> = ({ contracts, clients, advisors, contractAdvisors, onEdit, onDelete }) => {
+const ContractList: React.FC<ContractListProps> = memo(({ 
+  contracts, 
+  clients, 
+  advisors, 
+  contractAdvisors, 
+  onEdit, 
+  onDelete 
+}) => {
   const [sortField, setSortField] = useState<SortField>(null);
   const [sortDirection, setSortDirection] = useState<SortDirection>(null);
-  const [sortedContracts, setSortedContracts] = useState<Contract[]>(contracts);
 
-  useEffect(() => {
+  // Create lookup maps for better performance
+  const clientsMap = useMemo(() => {
+    return new Map(clients.map(client => [String(client.id), client]));
+  }, [clients]);
+
+  const advisorsMap = useMemo(() => {
+    return new Map(advisors.map(advisor => [String(advisor.id), advisor]));
+  }, [advisors]);
+
+  // Group contract advisors by contract ID for faster lookup
+  const contractAdvisorsMap = useMemo(() => {
+    const map = new Map<string, string[]>();
+    contractAdvisors.forEach(ca => {
+      const contractId = String(ca.contractId);
+      if (!map.has(contractId)) {
+        map.set(contractId, []);
+      }
+      map.get(contractId)!.push(String(ca.advisorId));
+    });
+    return map;
+  }, [contractAdvisors]);
+
+  const sortedContracts = useMemo(() => {
     if (!sortField || !sortDirection) {
-      setSortedContracts(contracts);
-      return;
+      return contracts;
     }
 
-    const sorted = [...contracts].sort((a, b) => {
+    return [...contracts].sort((a, b) => {
       let aValue: any;
       let bValue: any;
 
@@ -39,34 +66,40 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, clients, advisor
           aValue = a.institution;
           bValue = b.institution;
           break;
-        case 'clientName':
-          aValue = clients.find(c => c.id === a.clientId)?.name || '';
-          bValue = clients.find(c => c.id === b.clientId)?.name || '';
+        case 'clientName': {
+          const aClient = clientsMap.get(String(a.clientId));
+          const bClient = clientsMap.get(String(b.clientId));
+          aValue = aClient ? `${aClient.name} ${aClient.surname}` : '';
+          bValue = bClient ? `${bClient.name} ${bClient.surname}` : '';
           break;
-        case 'administratorName':
-          const aAdmin = advisors.find(adv => String(adv.id) === String(a.administratorId));
-          const bAdmin = advisors.find(adv => String(adv.id) === String(b.administratorId));
-          aValue = aAdmin?.name || '';
-          bValue = bAdmin?.name || '';
+        }
+        case 'administratorName': {
+          const aAdmin = advisorsMap.get(String(a.administratorId));
+          const bAdmin = advisorsMap.get(String(b.administratorId));
+          aValue = aAdmin ? `${aAdmin.name} ${aAdmin.surname}` : '';
+          bValue = bAdmin ? `${bAdmin.name} ${bAdmin.surname}` : '';
           break;
-        case 'assignedAdvisors':
-          const aAdvisors = contractAdvisors
-            .filter(ca => String(ca.contractId) === a.id)
-            .map(ca => {
-              const advisor = advisors.find(adv => String(adv.id) === String(ca.advisorId));
-              return advisor ? `${advisor.name} ${advisor.surname}` : '';
-            })
+        }
+        case 'assignedAdvisors': {
+          const aAdvisorIds = contractAdvisorsMap.get(String(a.id)) || [];
+          const bAdvisorIds = contractAdvisorsMap.get(String(b.id)) || [];
+          
+          const aAdvisors = aAdvisorIds
+            .map(id => advisorsMap.get(id))
+            .filter(Boolean)
+            .map(adv => `${adv!.name} ${adv!.surname}`)
             .join(', ');
-          const bAdvisors = contractAdvisors
-            .filter(ca => String(ca.contractId) === b.id)
-            .map(ca => {
-              const advisor = advisors.find(adv => String(adv.id) === String(ca.advisorId));
-              return advisor ? `${advisor.name} ${advisor.surname}` : '';
-            })
+          
+          const bAdvisors = bAdvisorIds
+            .map(id => advisorsMap.get(id))
+            .filter(Boolean)
+            .map(adv => `${adv!.name} ${adv!.surname}`)
             .join(', ');
+          
           aValue = aAdvisors;
           bValue = bAdvisors;
           break;
+        }
         case 'validityDate':
           aValue = new Date(a.validityDate).getTime();
           bValue = new Date(b.validityDate).getTime();
@@ -81,9 +114,7 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, clients, advisor
         return aValue < bValue ? 1 : -1;
       }
     });
-
-    setSortedContracts(sorted);
-  }, [contracts, clients, advisors, contractAdvisors, sortField, sortDirection]);
+  }, [contracts, clientsMap, advisorsMap, contractAdvisorsMap, sortField, sortDirection]);
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -107,27 +138,30 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, clients, advisor
   };
 
   const getClientName = (clientId: string) => {
-    const client = clients.find(c => String(c.id) === clientId);
+    const client = clientsMap.get(clientId);
     return client ? `${client.name} ${client.surname}` : 'Unknown';
   };
 
   const getAdvisorName = (advisorId: string) => {
-    const advisor = advisors.find(a => String(a.id) === advisorId);
+    const advisor = advisorsMap.get(advisorId);
     return advisor ? `${advisor.name} ${advisor.surname}` : 'Unknown';
   };
 
   const getAssignedAdvisors = (contractId: string) => {
-    return contractAdvisors
-      .filter(ca => String(ca.contractId) === contractId)
-      .map(ca => {
-        const advisor = advisors.find(adv => String(adv.id) === String(ca.advisorId));
+    const advisorIds = contractAdvisorsMap.get(contractId) || [];
+    return advisorIds
+      .map(id => {
+        const advisor = advisorsMap.get(id);
         return advisor ? {
-          id: String(advisor.id),
+          id,
           name: `${advisor.name} ${advisor.surname}`
         } : null;
       })
-      .filter(advisor => advisor !== null) as { id: string; name: string }[];
+      .filter(Boolean) as { id: string; name: string }[];
   };
+
+  // Memoize isAdmin check
+  const isAdmin = useMemo(() => localStorage.getItem('isAdmin') === 'true', []);
 
   return (
     <div className="w-full">
@@ -226,7 +260,7 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, clients, advisor
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-500">
                     {
-                      getAssignedAdvisors(String(contract.id)).map((advisor, index) => (
+                      getAssignedAdvisors(String(contract.id)).map((advisor, index, array) => (
                         <React.Fragment key={advisor.id}>
                           <Link
                             to={`/advisors/${advisor.id}`}
@@ -234,7 +268,7 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, clients, advisor
                           >
                             {advisor.name}
                           </Link>
-                          {index < getAssignedAdvisors(String(contract.id)).length - 1 && ', '}
+                          {index < array.length - 1 && ', '}
                         </React.Fragment>
                       ))
                     }
@@ -252,7 +286,7 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, clients, advisor
                   </td>
                   <td className="px-6 py-4 text-right text-sm font-medium">
                     <div className="flex flex-col items-end space-y-2">
-                      {localStorage.getItem('isAdmin') === 'true' && (
+                      {isAdmin && (
                         <>
                           <button
                             onClick={() => onEdit(contract)}
@@ -277,7 +311,7 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, clients, advisor
         </div>
       </div>
 
-      {/* Mobile Card View */}
+      {/* Mobile Card View - similar optimizations */}
       <div className="md:hidden">
         <div className="space-y-4">
           {sortedContracts.map((contract) => (
@@ -318,7 +352,7 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, clients, advisor
                   <div className="text-gray-500">Assigned Advisors</div>
                   <div className="break-words">
                     {
-                      getAssignedAdvisors(String(contract.id)).map((advisor, index) => (
+                      getAssignedAdvisors(String(contract.id)).map((advisor, index, array) => (
                         <React.Fragment key={advisor.id}>
                           <Link
                             to={`/advisors/${advisor.id}`}
@@ -326,7 +360,7 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, clients, advisor
                           >
                             {advisor.name}
                           </Link>
-                          {index < getAssignedAdvisors(String(contract.id)).length - 1 && ', '}
+                          {index < array.length - 1 && ', '}
                         </React.Fragment>
                       ))
                     }
@@ -336,7 +370,7 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, clients, advisor
                   <div>{new Date(contract.validityDate).toLocaleDateString()}</div>
                 </div>
                 <div className="flex -mx-4 -mb-4 mt-4 border-t border-gray-200">
-                  {localStorage.getItem('isAdmin') === 'true' && (
+                  {isAdmin && (
                     <>
                       <button
                         onClick={() => onEdit(contract)}
@@ -360,6 +394,8 @@ const ContractList: React.FC<ContractListProps> = ({ contracts, clients, advisor
       </div>
     </div>
   );
-};
+});
+
+ContractList.displayName = 'ContractList';
 
 export default ContractList;

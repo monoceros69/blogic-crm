@@ -1,4 +1,5 @@
-export interface Client {
+// Base person interface
+  export interface Person {
     id?: string;
     name: string;
     surname: string;
@@ -7,15 +8,12 @@ export interface Client {
     ssn: string;
     age: number;
   }
-  
-  export interface Advisor {
-    id?: string;
-    name: string;
-    surname: string;
-    email: string;
-    phone: string;
-    ssn: string;
-    age: number;
+
+  // Client extends Person (no additional fields needed)
+  export interface Client extends Person {}
+
+  // Advisor extends Person with additional isAdmin field
+  export interface Advisor extends Person {
     isAdmin?: boolean;
   }
   

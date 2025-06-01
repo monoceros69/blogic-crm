@@ -2,7 +2,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { clientsApi } from '../services/api';
 
-export function ClientDetailsPage() {
+function ClientDetailsPage() {
   const { id } = useParams<{ id: string }>();
   const clientId =  id || '';
 
@@ -89,3 +89,4 @@ export function ClientDetailsPage() {
     </div>
   );
 }
+export default ClientDetailsPage;

@@ -2,7 +2,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { advisorsApi } from '../services/api';
 
-export function AdvisorDetailsPage() {
+function AdvisorDetailsPage() {
   const { id } = useParams<{ id: string }>();
   const advisorId = parseInt(id || '0');
 
@@ -103,3 +103,4 @@ export function AdvisorDetailsPage() {
     </div>
   );
 }
+export default AdvisorDetailsPage;

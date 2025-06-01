@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import AdvisorList from '../components/advisors/AdvisorList';
-import { AdvisorForm } from '../components/advisors/AdvisorForm';
+import { PersonForm } from '../components/PersonForm';
 import { advisorsApi } from '../services/api';
 import { type Advisor } from '../types';
-import { type AdvisorFormData } from '../schemas';
+import { type PersonFormData } from '../schemas';
 
-export function AdvisorsPage() {
+function AdvisorsPage() {
   const queryClient = useQueryClient();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingAdvisor, setEditingAdvisor] = useState<Advisor | undefined>();
@@ -21,7 +21,7 @@ export function AdvisorsPage() {
   });
 
   const createMutation = useMutation({
-    mutationFn: (data: AdvisorFormData) => advisorsApi.create(data),
+    mutationFn: (data: PersonFormData & { isAdmin?: boolean }) => advisorsApi.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['advisors'] });
       setIsFormOpen(false);
@@ -30,7 +30,7 @@ export function AdvisorsPage() {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: AdvisorFormData }) =>
+    mutationFn: ({ id, data }: { id: string; data: PersonFormData & { isAdmin?: boolean } }) =>
       advisorsApi.update(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['advisors'] });
@@ -47,7 +47,7 @@ export function AdvisorsPage() {
     },
   });
 
-  const handleSubmit = (data: AdvisorFormData) => {
+  const handleSubmit = (data: PersonFormData & { isAdmin?: boolean }) => {
     if (editingAdvisor?.id) {
       updateMutation.mutate({ id: editingAdvisor.id, data });
     } else {
@@ -119,18 +119,7 @@ export function AdvisorsPage() {
         <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
           <button
             type="button"
-            onClick={() => {
-              if (hasUnsavedChanges) {
-                if (window.confirm('You have unsaved changes. Do you want to discard them and create a new advisor?')) {
-                  setIsFormOpen(true);
-                  setEditingAdvisor(undefined);
-                  setHasUnsavedChanges(false);
-                }
-              } else {
-                setIsFormOpen(true);
-                setEditingAdvisor(undefined);
-              }
-            }}
+            onClick={() => setIsFormOpen(true)}
             className="inline-flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 w-40"
             hidden={localStorage.getItem('isAdmin') !== 'true'}
           >
@@ -145,11 +134,12 @@ export function AdvisorsPage() {
             <h3 className="text-lg font-medium leading-6 text-gray-900 mb-4">
               {editingAdvisor ? 'Edit Advisor' : 'New Advisor'}
             </h3>
-            <AdvisorForm
-              advisor={editingAdvisor}
+            <PersonForm
+              person={editingAdvisor}
               onSubmit={handleSubmit}
               onCancel={handleCancel}
               onFormChange={handleFormChange}
+              isAdvisor={true}
             />
           </div>
         </div>
@@ -165,3 +155,4 @@ export function AdvisorsPage() {
     </div>
   );
 }
+export default AdvisorsPage;

@@ -2,7 +2,7 @@ import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { contractsApi, clientsApi, advisorsApi, contractAdvisorsApi } from '../services/api';
 
-export function ContractDetailsPage() {
+function ContractDetailsPage() {
   const { id } = useParams<{ id: string }>();
   const contractId = id || '';
 
@@ -180,3 +180,4 @@ export function ContractDetailsPage() {
     </div>
   );
 }
+export default ContractDetailsPage;
