@@ -1,146 +1,17 @@
 # Contract Management POC
 
 ![CI](https://github.com/monoceros69/blogic-crm/workflows/CI/badge.svg)
-# Contract Management POC
 
-A proof-of-concept React application for managing contracts, clients, and advisors. Built with React, TypeScript, React Hook Form, Zod, and json-server for mock API.
+A proof-of-concept React application for managing contracts, clients, and advisors. Built with React, TypeScript, React Hook Form, Zod, and json-server for a mock API.
 
-## Placeholder accounts for user authentication (*Passwords have been hashed with Bcrypt - 1 round*)
+This project demonstrates core CRUD functionalities, form validation, many-to-many relationships, role-based access, and responsive design, along with several added features like enhanced validation, duplicate checks, improved table interactions, and comprehensive CSV export capabilities.
 
-### Admin account (Full permissions)
-- **Username:** admin
-- **Password:** password123
+---
 
-### User account (Read-Only)
-- **Username:** user
-- **Password:** password456
+## Documentation
 
-## Features
-
-### Core Functionality
-
-- **Full CRUD operations** for Contracts, Clients, and Advisors.
-- **Form validation** using React Hook Form + Zod.
-- **Many-to-many relationships** between contracts and advisors.
-- **Role-based features** (Admin/Advisor roles).
-- **Cross-entity navigation** with detailed views.
-- **Responsive UI** with Tailwind CSS.
-
-### Added Functionality
-
-- **Enhanced Phone Number Validation:** Checks for numeric format and allows optional leading '+'.
-- **Duplicate Contract Check:** Prevents creation or updating with existing registration numbers.
-- **Improved Table Functionality:** Added sorting and filtering on Contracts, Clients, and Advisors tables.
-- **Refined Mobile Layout:** Adjusted button layout and ensured text wrapping in mobile card views.
-- **Comprehensive CSV Export:** Export individual data (Contracts, Clients, Advisors) or a unified CSV file with data from all entities.
-- **Excel-Friendly CSV Export:** Formats phone numbers to prevent scientific notation in Excel.
-
-## Tech Stack
-
-- **React 18** with TypeScript
-- **Vite** for fast development
-- **React Router** for navigation
-- **React Query (TanStack Query)** for server state management
-- **React Hook Form + Zod** for forms and validation
-- **Tailwind CSS** for styling
-- **json-server** for mock REST API
-
-## Prerequisites
-
-- Node.js (v16 or higher)
-- npm or yarn
-
-## Installation
-
-1. Clone the repository:
-```bash
-git clone https://github.com/YOUR_USERNAME/contract-management-poc.git
-cd contract-management-poc
-```
-
-2. Install dependencies:
-```bash
-npm install
-```
-
-## Running the Application
-
-Start both the React app and json-server:
-
-```bash
-npm start
-```
-
-This will run:
-- React app on http://localhost:5173
-- JSON Server on http://localhost:3001
-
-## Project Structure
-
-```
-src/
-├── components/         # Reusable components
-│   ├── clients/       # Client-specific components
-│   ├── advisors/      # Advisor-specific components
-│   └── contracts/     # Contract-specific components
-├── pages/             # Page components
-├── services/          # API service layer
-├── types/             # TypeScript type definitions
-├── schemas/           # Zod validation schemas
-└── App.tsx           # Main app component
-```
-
-## API Endpoints
-
-The mock API provides the following endpoints:
-
-- `GET/POST /contracts` - List all contracts or create new
-- `GET/PUT/DELETE /contracts/:id` - Get, update, or delete specific contract
-- `GET/POST /clients` - List all clients or create new
-- `GET/PUT/DELETE /clients/:id` - Get, update, or delete specific client
-- `GET/POST /advisors` - List all advisors or create new
-- `GET/PUT/DELETE /advisors/:id` - Get, update, or delete specific advisor
-- `GET/POST /contractAdvisors` - Manage contract-advisor relationships
-
-## Business Rules
-
-1. Each contract must have:
-   - A unique registration number
-   - An institution (ČSOB, AEGON, Axa, etc.)
-   - One client
-   - One administrator (must be an advisor with admin role)
-   - At least one advisor
-   - Conclusion, validity, and ending dates
-
-2. Date constraints:
-   - Validity date must be on or after conclusion date
-   - Ending date must be after validity date
-
-3. All clients and advisors must provide:
-   - Name and surname
-   - Email and phone
-   - SSN (format: 123456/7890)
-   - Age (minimum 18)
-
-## Development
-
-To run only the React app:
-```bash
-npm run dev
-```
-
-To run only the JSON server:
-```bash
-npm run server
-```
-
-## Building for Production
-
-```bash
-npm run build
-```
-
-The build artifacts will be stored in the `dist/` directory.
+- [User Guide](USER_GUIDE.md): Learn how to use the application, including placeholder accounts and features.
+- [Technical Documentation](TECHNICAL_DOCS.md): Get an in-depth understanding of the project's tech stack, structure, APIs, and development details.
 
 ## License
 
